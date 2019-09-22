@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.SensorDao">
+	<resultMap id="SensorWithType" type="com.lyyh.greenhouse.pojo.Sensor">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="type_id" property="typeId" />
+		<result column="name" property="name" />
+		<result column="house_id" property="houseId" />
+		<result column="zone_id" property="zoneId" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="is_del" property="isDel" />
+		<association property="type" resultMap="SensorType"></association>
+	</resultMap>
+	<resultMap id="SensorType" type="com.lyyh.greenhouse.pojo.SensorType" >
+		<id column="type_id" property="id" />
+		<result column="name" property="name" />
+		<result column="data_type" property="dataType" />
+		<result column="data_min" property="dataMin" />
+		<result column="data_max" property="dataMax" />
+		<result column="range_min" property="rangeMin" />
+		<result column="range_max" property="rangeMax" />
+		<result column="unit" property="unit" />
+		<result column="image" property="image" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="is_del" property="isDel" />
+	</resultMap>
+	<resultMap id="Sensor" type="com.lyyh.greenhouse.pojo.Sensor">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="type_id" property="typeId" />
+		<result column="name" property="name" />
+		<result column="house_id" property="houseId" />
+		<result column="zone_id" property="zoneId" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="is_del" property="isDel" />
+	</resultMap>
+
+	<select id="selectById" parameterType="Integer" resultMap="Sensor">
+		select * from sensor where id = #{id}
+	</select>
+
+	<select id="selectWithTypeById" parameterType="Integer" resultMap="SensorWithType">
+		select s.*,t.*
+		from sensor s
+		join sensor_type t on s.type_id = t.id
+		where s.id = #{id}
+	</select>
+
+	<select id="selectTypeByTypeId" parameterType="Integer" resultMap="SensorType">
+		select * from sensor_type where id = #{id}
+	</select>
+	
+	<select id="selectByHouseId" resultMap="Sensor">
+		select * from sensor where house_id = #{houseId} and is_del = 0 order by type_id,id
+	</select>
+
+	<select id="selectTypeList" resultMap="SensorType">
+		select * from sensor_type where is_del = 0;
+	</select>
+	
+	<select id="selectWithTypeByHouseId" parameterType="Integer" resultMap="SensorWithType">
+		select s.*,t.*
+		from sensor s
+		join sensor_type t on s.type_id = t.id
+		where s.is_del = 0 and t.is_del = 0 and s.house_id = #{houseId}
+		order by s.type_id,s.id
+	</select>
+	<select id="selectWithTypeByHouseIdOrderByPageSort" parameterType="Integer" resultMap="SensorWithType">
+		select s.*,t.*
+		from sensor s
+		join sensor_type t on s.type_id = t.id
+		where s.is_del = 0 and t.is_del = 0 and s.house_id = #{houseId}
+		order by s.page_sort
+	</select>
+	<select id="selectWithTypeByHouseIdOrderByExcelSort" parameterType="Integer" resultMap="SensorWithType">
+		select s.*,t.*
+		from sensor s
+		join sensor_type t on s.type_id = t.id
+		where s.is_del = 0 and t.is_del = 0 and s.house_id = #{houseId}
+		order by s.excel_sort
+	</select>
+	
+	
+</mapper>

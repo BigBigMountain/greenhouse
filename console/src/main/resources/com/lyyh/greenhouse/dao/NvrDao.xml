@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.NvrDao" >
+	
+  
+	<select id="getAllNvrByZoneId" parameterType="Integer" resultType="Nvr">
+		select * from nvr where nvr_state = 1 and zone_id = #{zoneId}
+	</select>
+  
+	<insert id="saveNvr" parameterType="Nvr" useGeneratedKeys="true" keyProperty="nvr_id">
+		insert into nvr 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="nvr_name != null">
+				nvr_name,				
+			</if>
+			<if test="nvr_ipv4 != null">
+				nvr_ipv4,
+			</if>
+			<if test="nvr_port != null">
+				nvr_port,
+			</if>
+			<if test="nvr_username != null">
+				nvr_username,
+			</if>
+			<if test="nvr_password != null">
+				nvr_password,
+			</if>
+			<if test="zone_id != null">
+				zone_id,
+			</if>
+		</trim>	
+		
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="nvr_name != null">
+				#{nvr_name},				
+			</if>
+			<if test="nvr_ipv4 != null">
+				#{nvr_ipv4},
+			</if>
+			<if test="nvr_port != null">
+				#{nvr_port},
+			</if>
+			<if test="nvr_username != null">
+				#{nvr_username},
+			</if>
+			<if test="nvr_password != null">
+				#{nvr_password},
+			</if>
+			<if test="zone_id != null">
+				#{zone_id},
+			</if>
+		</trim>	
+	</insert>
+	
+	
+	<update id="updateNvr" parameterType="Nvr">
+		
+		<trim prefix="update nvr set" suffixOverrides="," suffix="where nvr_id = #{nvr_id}">
+			<if test="nvr_name != null">
+				nvr_name = #{nvr_name},				
+			</if>
+			<if test="nvr_ipv4 != null">
+				nvr_ipv4 = #{nvr_ipv4},
+			</if>
+			<if test="nvr_port != null">
+				nvr_port = #{nvr_port},
+			</if>
+			<if test="nvr_username != null">
+				nvr_username = #{nvr_username},
+			</if>
+			<if test="nvr_password != null">
+				nvr_password = #{nvr_password},
+			</if>
+			
+		</trim>
+	</update>
+	
+	<update id="delnvr" parameterType="Integer">
+		update nvr set nvr_state = 0 where nvr_id = #{nvr_id}
+	</update>
+</mapper>

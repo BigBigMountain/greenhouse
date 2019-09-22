@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.dao.ValveDao" >
+	<resultMap id="valveData" type="com.lyyh.fertilizer.pojo.ValveData">
+		<id  column="id" property="id"/>
+		<result column="fertilizer_id" property="fertilizerId"/>
+		<result column="fertilizer_data_id" property="fertilizerDataId"/>
+		<result column="number" property="number"/>
+		<result column="value" property="value"/>
+		<result column="datetime" property="datetime"/>
+		
+	</resultMap>
+	
+	<resultMap id="ValveDataVo" type="com.lyyh.fertilizer.pojo.ValveDataVo">
+		<id  column="id" property="id"/>
+		<result column="fertilizer_id" property="fertilizerId"/>
+		<result column="fertilizer_data_id" property="fertilizerDataId"/>
+		<result column="number" property="number"/>
+		<result column="value" property="value"/>
+		<result column="datetime" property="datetime"/>
+		<result column="count" property="count" />
+		<association property="fertilizerData" javaType="FertilizerData">
+			<id column="fd_id" property="fertilizerDataId" />
+			<result column="ec" property="ec" />
+			<result column="ph" property="ph" />
+			<result column="totalIrrigation" property="totalIrrigation" />
+			<result column="liquidLevel" property="liquidLevel" />
+			<result column="rateFlow" property="rateFlow" />
+			<result column="mainFlow" property="mainFlow" />
+		</association>
+	</resultMap>
+	
+	
+	
+	
+	<insert id="insertValveData" parameterType="ValveData" >
+		insert into fertilizer_valve_data 
+			(fertilizer_id,fertilizer_data_id,number,[value])
+		values (
+			#{fertilizer_id},
+			#{fertilizer_data_id},
+			#{number},
+			#{value}
+		)
+	</insert>
+	
+	<insert id="insertValveDataList" parameterType="list">
+		insert into fertilizer_valve_data
+			(fertilizer_id,fertilizer_data_id,number,value)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+				#{item.fertilizerId},
+				#{item.fertilizerDataId},
+				#{item.number},
+				#{item.value}
+			)
+		</foreach>
+	</insert>
+	
+	
+	<select id="queryByFertilizerId" parameterType="int" resultMap="valveData">
+		select * 
+		from fertilizer_valve_data
+		where fertilizer_id = #{fertilizerId}
+	</select>
+	
+	
+	<select id="queryByPeriod" resultMap="valveData">
+		select * 
+		from fertilizer_valve_data
+		where fertilizer_id = #{fertilizerId}
+		and datetime between #{start} and #{end}
+	</select>
+	
+	
+	<select id="queryVoByPeriod" resultMap="ValveDataVo">
+		select 
+			fvd.id,fvd.fertilizer_id,fvd.number,fvd.value,fvd.datetime,
+			fd.id fd_id,fd.ec,fd.ph,fd.totalIrrigation,fd.mainFlow,fd.liquidLevel,fd.rateFlow
+		from fertilizer_valve_data fvd
+		left join fertilizerData fd on fd.id = fvd.fertilizer_data_id
+		where fvd.value is not null 
+		and fvd.fertilizer_id = #{fertilizerId}
+		and fvd.datetime between #{start} and #{end}
+		order by fvd.datetime desc,fvd.number
+	</select>
+	
+	
+	
+	<select id="queryVoByVo" resultMap="ValveDataVo">
+		select 
+			fvd.id,fvd.fertilizer_id,fvd.number,fvd.value,fvd.datetime,fvd.fertilizer_id,
+			n.count
+		from fertilizer_valve_data fvd
+		join (
+			select datetime,fertilizer_id,value,count(id) count from fertilizer_valve_data 
+			where fertilizer_id = #{fertilizerId}
+				and value is not null
+				and datetime between #{start} and #{end}
+				<if test = "number != null and number != 0 and number != '' ">
+					and number = #{number}
+				</if>
+			group by datetime ,value ,fertilizer_id
+		) n on n.datetime = fvd.datetime and fvd.value = n.value and fvd.fertilizer_id = n.fertilizer_id
+		order by fvd.number,fvd.datetime
+
+	</select>
+</mapper>

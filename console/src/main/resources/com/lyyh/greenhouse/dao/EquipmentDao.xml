@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.EquipmentDao">
+	<resultMap id="Equipment" type="com.lyyh.greenhouse.pojo.Equipment">
+		<id column="id" property="id" />
+		<result column="code" property="equipmentCode" />
+		<result column="name" property="equipmentName" />
+		<result column="equipment_type_id" property="typeId" />
+		<result column="equipment_type_name" property="typeName" />
+		<result column="state" property="state" />
+		<result column="house_id" property="houseId" />
+		<result column="zone_id" property="zoneId" />
+		<result column="zone_name" property="zoneName" />
+	</resultMap>
+
+	<select id="queryAllByHouseId" parameterType="int" resultMap="Equipment">
+		select * from equipment where house_id = #{houseId} and is_del = 0
+	</select>
+
+	<insert id="saveEquipment" parameterType="Equipment">
+		insert into equipment
+			(
+				code,name,house_id
+				<if test="typeId != null ">
+					,equipment_type_id
+				</if>
+			)
+		values
+			(
+				#{equipmentCode},#{equipmentName},#{houseId}
+				<if test="typeId != null ">
+					,#{typeId}
+				</if>
+			)
+	</insert>
+
+	<update id="updateEquipment" parameterType="Equipment">
+		update equipment
+
+		<trim prefix="set" suffixOverrides=",">
+			<if test="equipmentCode != null">
+				code=#{equipmentCode},
+			</if>
+			<if test="equipmentName != null">
+				name=#{equipmentName},
+			</if>
+			<if test="equipmentState != null">
+				equipmentState=#{equipmentState}
+			</if>
+			<if test="typeId != null and typeId != 0" >
+				equipment_type_id=#{typeId}
+			</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+<!-- 
+	<delete id="delEquipmentById" parameterType="int">
+		delete from equipment where equipment_id = #{equipmentId}
+	</delete>
+-->
+	<update id="delEquipmentById" parameterType="int">
+		update equipment set is_del = 1 where id = #{id}
+	</update>
+	
+</mapper>

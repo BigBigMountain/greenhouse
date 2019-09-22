@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.WaterSensorDataDao">
+	<resultMap id="WaterSensorData" type="com.lyyh.greenhouse.pojo.WaterSensorData">
+		<id column="id" property="id" />
+		<result column="sensor_id" property="sensorId" />
+		<result column="sensor_type_id" property="sensorTypeId" />
+		<result column="house_id" property="houseId" />
+		<result column="zone_id" property="zoneId" />
+		<result column="value" property="value" />
+		<result column="datetime" property="dateTime" />
+		<result column="unit" property="unit" />
+		<result column="data_type" property="dataType" />
+		<result column="sensor_name" property="sensorName" />
+		<result column="led_show" property="ledShow" />
+		<result column="image" property="image" />
+		<result column="excel_sort" property="excelSort" />
+		<result column="page_sort" property="pageSort" />
+		<result column="sum_value" property="sumValue" />
+		<result column="period_value" property="periodValue" />
+	</resultMap>
+	
+	<insert id="insertList" parameterType="list">
+		insert into water_meter_data
+		(sensor_id,sensor_type_id,house_id,zone_id,value,sum_value,period_value,datetime)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.sensorId},#{item.sensorTypeId},#{item.houseId},#{item.zoneId},#{item.value},#{item.sumValue},#{item.periodValue},#{item.dateTime})
+		</foreach>
+	</insert>
+	
+	<select id="getNewestDataBySensorId" parameterType="int" resultMap="WaterSensorData">
+		select * from water_meter_data where id = (select max(id) from water_meter_data where sensor_id = #{sensorId})
+	</select>
+	
+	<select id="getDataByVo" resultMap="WaterSensorData">
+		select sd.*,s.name sensor_name,st.unit
+		from water_meter_data sd 
+		join sensor s on sd.sensor_id = s.id
+		join sensor_type st on st.id = s.type_id
+		where s.id = #{sensorId} and sd.datetime between #{start} and #{end}
+		order by sd.datetime
+	</select>
+	
+	<update id="resetPriodValue" parameterType="int">
+		update water_meter_data  set period_value = 0 where sensor_id = #{sensorId} order by id desc limit 1
+	</update>
+</mapper>

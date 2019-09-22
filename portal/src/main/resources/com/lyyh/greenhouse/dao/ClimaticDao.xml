@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.ClimaticDao" >
+  
+  <resultMap type="Climatic" id="Climatic">
+  	<id column="id" property="id"/>
+  	<result column="wind_speed" property="windSpeed"/>
+  	<result column="wind_direction" property="windDirection"/>
+  	<result column="rain_and_snow" property="rainAndSnow"/>
+  	<result column="rain_fall" property="rainFall"/>
+  	<result column="pressure" property="pressure"/>
+  	<result column="pm25" property="pm25"/>
+  	<result column="ph" property="ph"/>
+  	<result column="temperature" property="temperature"/>
+  	<result column="humidity" property="humidity"/>
+  	<result column="lighting" property="lighting"/>
+  	<result column="zone_id" property="zoneId"/>
+  	<result column="zone_name" property="zoneName"/>
+  	<result column="datetime" property="datetime"/>
+  </resultMap>
+ <!-- 最新信息 -->
+	<select id="getNewest" parameterType = "Integer" resultMap = "Climatic">
+	 select * from climatic_data
+	  where 1=1 
+	  	 <if test="#{zoneId} != null">
+	  	 	and zone_id = #{zoneId}
+	  	 </if>
+	  order by datetime desc 
+	  limit 1
+	 </select>
+ 
+ <!-- 温度 -->
+  <select id="getTemperatureList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,temperature  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!-- 湿度 -->
+  <select id="getHumidityList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,humidity  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!-- 光照 -->
+  <select id="getLightingList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,lighting  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!-- 气压 -->
+  <select id="getPressureList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,pressure  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!-- 风速 -->
+  <select id="getWindSpeedList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,wind_speed  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!--降雨量  -->
+  <select id="getRainFallList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,rain_fall  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!-- PH -->
+  <select id="getPHList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,ph  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+ <!-- PM2.5 -->
+  <select id="getPM25List" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select datetime,pm25 
+  	 from
+	  	<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+  	 where 1=1 
+  		<if test="zoneId != null">
+  			and zone_id = #{zoneId}
+  		</if>
+  		<if test="null != start and null != end">
+  			and datetime &gt; #{start} and datetime &lt; #{end}
+  		</if>
+  </select>
+  
+  <insert id="insertOne" parameterType="Climatic">
+  	insert into climatic_data
+  		(wind_speed,wind_direction,rain_and_snow,rain_fall,pressure,pm25,ph,temperature,humidity,lighting,zone_id)
+  	values 
+  		(#{windSpeed},#{windDirection},#{rainAndSnow},#{rainFall},#{pressure},#{pm25},#{ph},#{temperature},#{humidity},#{lighting},#{zoneId})
+  </insert>
+ 
+ 
+	<insert id="insertToHis">
+		insert into climatic_data_his select * from climatic_data where mod(minute(datetime),10) = 0
+	</insert>
+	
+	<delete id="deleteData">
+		delete from climatic_data
+	</delete>
+	
+	<select id="getLastRainFall" resultType="Double" parameterType="int">
+		select rainfall from rain_fall_log where zone_id = #{zoneId} order by date desc limit 1
+	</select>
+	
+	<select id="getRainFallByDate" resultType="Double">
+		select rainfall from rain_fall_log where date = #{day} and zone_id = #{zoneId}
+	</select>
+	
+	<insert id="insertRainFallLog" >
+		insert into rain_fall_log (zone_id,date,rainfall) values (#{zoneId},#{day},#{value})
+	</insert>
+	
+	<update id="updateRainFallLog">
+		update rain_fall_log set rainfall = #{value}  where date = #{day} and zone_id = #{zoneId}
+	</update>
+	
+	<select id="getClimaticData" resultMap="Climatic">
+		select * from 
+		<if test="null != start and null != end ">
+	  		climatic_data_his
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	climatic_data
+  		</if>
+		where zone_id = #{zoneId}
+		<if test="null != start and null != end ">
+	  		and datetime between #{start} and #{end}
+	  	</if>
+	</select>
+	
+	
+	<select id="getLastOneDayAgoRainFall" resultType="Double" >
+		select raimfall from rain_fall_log where zone_id = #{zoneId} and date &lt; #{date} order by date desc limit 1
+	</select>
+</mapper>

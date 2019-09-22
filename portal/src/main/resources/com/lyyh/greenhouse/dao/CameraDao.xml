@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.CameraDao" >
+  <resultMap id="Camera" type="com.lyyh.greenhouse.pojo.Camera_GH" >
+    <id property="ca_id" column="Id" jdbcType="BIGINT" />
+    <result property="ca_code" column="CameraCode" jdbcType="VARCHAR" />
+    <result property="ca_name" column="CameraName" jdbcType="VARCHAR" />
+    <result property="ca_ip" column="CameraIp" jdbcType="VARCHAR" />
+    <result property="ca_port" column="CameraPort" jdbcType="VARCHAR" />
+    <result property="ca_username" column="CameraUserName" jdbcType="VARCHAR" />
+    <result property="ca_password" column="CameraPwd" jdbcType="VARCHAR" />
+    <result property="houseId" column="HouseCode" jdbcType="BIGINT" />
+    <result property="zoneName" column="ZoneCode" jdbcType="VARCHAR" />
+    <result property="ca_httpPort" column="HttpPort" jdbcType="VARCHAR" />
+    <result property="ca_pic" column="Pic" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- 
+  <resultMap type="Nvr" id="Nvr">
+  	<id property="nvr_id" column="" jdbcType="INT"/>
+  	<result property="nvr_name" column="nvr_name" jdbcType="varchar"/>
+  	<result property="nvr_ipv4" column="nvr_ipv4" jdbcType="varchar"/>
+  	<result property="nvr_ipv6" column="nvr_ipv6" jdbcType="varchar"/>
+  	<result property="nvr_port" column="nvr_port" jdbcType="int"/>
+  	<result property="nvr_username" column="nvr_username" jdbcType="varchar"/>
+  	<result property="nvr_password" column="nvr_password" jdbcType="varchar"/>
+  	<result property="zone_id" column="zone_id" jdbcType="int"/>
+  
+  </resultMap> -->
+  
+  <select id="findAllCameras" parameterType="string" resultMap="Camera">
+  	select CameraIp,HttpPort,CameraUserName,CameraPwd 
+  	from Camera_GH
+  	where 1=1 
+  		<if test="_parameter != null">
+  			and zoneCode = #{_parameter,jdbcType=VARCHAR}
+  		</if>
+  </select>
+  
+  <select id="countAllCamera" parameterType="String" resultType="int">
+  	select count(Id) 
+  	from Camera_GH 
+  	where ZoneCode = #{_parameter}
+  </select>
+  
+  <select id="findCameraByHouse" parameterType="HouseDataVo" resultMap="Camera">
+	select * 
+	from Camera_GH
+	where 1=1
+	<if test="houseId != null">
+		and HouseCode = #{houseId}
+	</if>
+	<if test="zoneName != null">
+		and ZoneCode = #{zoneName}
+	</if>
+  </select>
+  
+  
+  
+  <select id="findAllNvrByZoneName" parameterType="String" resultType="Nvr">
+  	select 
+  		n.*
+  	from nvr n 
+  	join zone z on n.zone_id = z.zone_id 
+  	where n.nvr_state=1 
+  	<if test="_parameter != null">
+	  	and z.zone_name = #{_parameter} 
+  	</if>
+  </select>
+  
+  <update id="updateIP" >
+  	update Camera_GH set CameraIp = #{ip} where ZoneCode=#{zoneName} 
+  	
+  </update>
+  
+</mapper>

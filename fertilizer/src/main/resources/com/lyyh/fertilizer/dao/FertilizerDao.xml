@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.dao.FertilizerDao">
+	
+	<resultMap id="Fertilizer" type="com.lyyh.fertilizer.pojo.Fertilizer">
+		<id column="id" 			property="fertilizerId" />
+		<result column="name" 		property="fertilizerName" />
+		<result column="addr" 		property="addr" />
+		<result column="coordinate" property="coordinate" />
+		<result column="state" 		property="state" />
+		<result column="isOnline" 	property="isOnline" />
+		<result column="desc" 		property="desc" />
+		<result column="prod_date" 	property="prodDate" />
+		<result column="dtu_code" 	property="dtuCode" />
+		<result column="zone_id" 	property="zoneId" />
+		<result column="user_id" 	property="userId" />
+		<result column="time" 		property="time" />
+		<result column="valve_type"	property="valveType" />
+	</resultMap>
+	
+	<resultMap id="FertilizerData" type="com.lyyh.fertilizer.pojo.FertilizerData">
+		<id column="id" 					property="fertilizerDataId" />
+		<result column="programNo" 			property="programNo" />
+		<result column="valve1" 			property="valve1" />
+		<result column="valve2" 			property="valve2"/>
+		<result column="valve3" 			property="valve3" />
+		<result column="totalIrrigation" 	property="totalIrrigation" 	jdbcType="FLOAT" />
+		<result column="soilHumidity1" 		property="soilHumidity1" />
+		<result column="soilHumidity2" 		property="soilHumidity2" />
+		<result column="soilHumidity3" 		property="soilHumidity3" />
+		<result column="soilHumidity4" 		property="soilHumidity4" />
+		<result column="mainFlow" 			property="mainFlow" 		jdbcType="FLOAT" />
+		<result column="liquidLevel" 		property="liquidLevel" 		jdbcType="FLOAT" />
+		<result column="ph" 				property="ph" 				jdbcType="FLOAT" />
+		<result column="ec" 				property="ec" 				jdbcType="FLOAT" />
+		<result column="rateFlow" 			property="rateFlow" 		jdbcType="FLOAT" />
+		<result column="time" 				property="time" />
+		<result column="fertilizer_id" 		property="fertilizerId" />
+		<result column="dtu_code" 			property="dtuCode" />
+	</resultMap>
+	
+	<select id="queryAll" resultMap="Fertilizer">
+		select * from fertilizer
+	</select>
+	
+	<select id="queryAllByUid" parameterType="int" resultMap="Fertilizer">
+		select * from fertilizer where user_id = #{userId}
+	</select>
+	<select id="queryAllByUsername" parameterType="String" resultMap="Fertilizer">
+		select f.* 
+		from fertilizer f
+		join users u on f.user_id = u.user_id
+		where u.user_name = #{_parameter}
+	</select>
+	
+	<select id="selectByDtuCode" parameterType="String" resultMap="Fertilizer">
+		select * from fertilizer where dtu_code = #{dtuCode}
+	</select>
+	
+	<select id="selectByFertilizerId" parameterType="int" resultMap="Fertilizer">
+		select * from fertilizer where id = #{fertilizerId}
+	</select>
+	
+	<insert id="addFertilizer" parameterType="Fertilizer" useGeneratedKeys="true" keyProperty="fertilizerId">
+		insert into fertilizer 
+			(name,addr,coordinate,state,isOnline,desc,prod_date,dtu_code,zone_id,user_id,valve_type)
+		values 
+			(#{fertilizerName},#{addr},#{coordinate},#{state},#{isOnline},#{desc},#{prodDate},#{dtuCode},#{zoneId},#{userId},#{valveType})
+	</insert>
+	
+	<!-- <delete id="deleteByFerId" parameterType="int">
+		delete from fertilizer where id = #{fertilizerId}
+	</delete> -->
+	<update id="deleteByFerId" parameterType="int">
+		update fertilizer set user_id = null where id = #{fertilizerId}
+	</update>
+	
+	<update id="updateFertilizer" parameterType="fertilizer">
+		update fertilizer
+		<set>
+			<if test="null != fertilizerName and fertilizerName != ''">
+				name = #{fertilizerName},
+			</if>
+			<if test="null != addr and addr != ''">
+				addr = #{addr},
+			</if>
+			<if test="null != coordinate and coordinate != ''">
+				coordinate = #{coordinate},
+			</if>
+			<if test="null != state">
+				state = #{state},
+			</if>
+			<if test="null != isOnline">
+				isOnline = #{isOnline},
+			</if>
+			<if test="null != desc and desc != ''">
+				desc = #{desc},
+			</if>
+			<if test="null != prodDate">
+				prod_date = #{prodDate},
+			</if>
+			<if test="null != dtuCode and dtuCode != ''">
+				dtu_code = #{dtuCode},
+			</if>
+			<if test="null != zoneId and zoneId != 0">
+				zone_id = #{zoneId}
+			</if>
+			<if test="null != valveType and valveType != 0">
+				valve_type = #{valveType}
+			</if>
+		</set>
+		where id = #{fertilizerId}
+	</update>
+	
+	<update id="setOnline" parameterType="string">
+		update fertilizer set isOnline = 1 where dtu_code = #{_parameter}
+	</update>
+	
+	<update id="setOffline" parameterType="string">
+		update fertilizer set isOnline = 0 where dtu_code = #{_parameter}
+	</update>
+	
+	<update id="setStateOn" parameterType="string" >
+		update fertilizer set state = 1 where dtu_code = #{_parameter}
+	</update>
+	<update id="setStateOff" parameterType="string" >
+		update fertilizer set state = 0 where dtu_code = #{_parameter}
+	</update>
+	
+	<insert id="addData" parameterType="FertilizerDataCollector" useGeneratedKeys="true" keyProperty="fertilizerDataId">
+		insert into fertilizerData 
+			(programNo,valve1,valve2,valve3,totalIrrigation,soilHumidity1,soilHumidity2,soilHumidity3,soilHumidity4,mainFlow,liquidLevel,ph,ec,rateFlow,time,fertilizer_id)
+		values 
+			(#{programNo},#{valve1},#{valve2},#{valve3},#{totalIrrigation},#{soilHumidity1},#{soilHumidity2},#{soilHumidity3},#{soilHumidity4},#{mainFlow},#{liquidLevel},#{ph},#{ec},#{rateFlow},#{time},(select id from fertilizer where dtu_code = #{dtuCode}))	
+	</insert>
+	
+	<insert id="addDatas" parameterType="List">
+		insert into fertilizerData
+			(programNo,valve1,valve2,valve3,totalIrrigation,soilHumidity1,soilHumidity2,soilHumidity3,soilHumidity4,mainFlow,liquidLevel,ph,ec,rateFlow,time,fertilizer_id)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.programNo},#{item.valve1},#{item.valve2},#{item.valve3},#{item.totalIrrigation},#{soilHumidity1},#{item.soilHumidity2},#{item.soilHumidity3},#{item.soilHumidity4},#{item.mainFlow},#{item.liquidLevel},#{item.ph},#{item.ec},#{item.rateFlow},#{item.time},(select id from fertilizer where dtu_code = #{item.dtuCode}))
+		</foreach>
+	</insert>
+	
+	<select id="selectOneDataByDataId" parameterType="int" resultMap="FertilizerData">
+		select * from fertilizerData where id = #{fertilizerDataId}
+	</select>
+	
+	<select id="queryDatasByVo" parameterType="FertilizerData" resultMap="FertilizerData">
+		select d.*,f.dtu_code from fertilizerData d
+		join fertilizer f on f.id = d.fertilizer_id 
+		where d.time between #{start} and #{end}
+		<if test="dtuCode != null and dtuCode != ''">
+			and f.dtu_code = #{dtuCode}
+		</if>
+		<if test="fertilizerId != null and fertilizerId != 0">
+			and d.fertilizer_id = #{fertilizerId}
+		</if>
+		<if test="null != userId and userId != 0">
+			and user_id = #{userId}
+		</if>
+	</select>
+	<select id="queryDatas" resultMap="FertilizerData">
+		select *
+		from fertilizerData 
+		where fertilizer_id = #{fertilizerId}
+		and time &gt;= #{start} and time &lt;= #{end}
+		order by time
+	</select>
+	
+	<select id="queryAllHaveDtuAndOnlineAndTZGK" resultMap="Fertilizer">
+		select *
+		from fertilizer
+		where 
+			( dtu_code is not null or dtu_code != '')
+			and isOnline = 1
+			and valve_type = 1
+	</select>
+	
+	<select id="queryAllHaveDtuAndOnline" resultMap="Fertilizer">
+		select *
+		from fertilizer
+		where 
+			( dtu_code is not null or dtu_code != '')
+			and isOnline = 1
+	</select>
+	
+	<select id="getNewestDataByUserName" resultMap= "FertilizerData">
+		select top 1 fd.*
+		from fertilizerData fd where fd.fertilizer_id in (
+		
+			select f.id from fertilizer f join users u on u.user_id = f.user_id where u.user_name = #{username}
+		
+		)
+		order by fd.id desc
+	</select>
+</mapper>

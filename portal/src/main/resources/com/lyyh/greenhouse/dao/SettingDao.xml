@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lyyh.greenhouse.dao.SettingDao" >
+ 
+	<resultMap id="ClimaticSetting" type="com.lyyh.greenhouse.pojo.ClimaticSetting">
+		<id column="id" property="id" />
+		<result column="zone_id" property="zoneId"/>
+		<result column="zone_name" property="zoneName"/>
+		<result column="ip" property="ip"/>
+		<result column="port" property="port"/>
+		<collection property="nodes" select="queryNodesByScId" column="id"></collection>
+	</resultMap>
+
+	<resultMap id="NodeSetting" type="com.lyyh.greenhouse.pojo.NodeSetting">
+		<id column="id" property="id"/>
+		<result column="node_position" property="nodePosition"/>
+		<result column="channel1" property="channel1"/>
+		<result column="channel2" property="channel2"/>
+		<result column="channel3" property="channel3"/>
+		<result column="channel4" property="channel4"/>
+		<result column="id" property="id"/>
+		
+	</resultMap>
+	
+	<resultMap id="HouseSetting" type="com.lyyh.greenhouse.pojo.HouseSetting">
+		<id column="id" property="id"/>
+		<result column="state" property="state"/>
+		<result column="ip" property="ip"/>
+		<result column="port" property="port"/>
+		<result column="node" property="node"/>
+		<result column="house_id" property="houseId"/>
+		<result column="house_name" property="houseName"/>
+		<result column="zone_id" property="zoneId"/>
+		<result column="zone_name" property="zoneName"/>
+	</resultMap>
+	
+	<resultMap id="ClimaticDataType" type="com.lyyh.greenhouse.pojo.ClimaticDataType">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="property_name" property="propertyName"/>
+		<result column="is_del" property="isDel"/>
+	</resultMap>
+
+
+
+  <select id="queryAllHouseSettings" parameterType="int" resultMap="HouseSetting" >
+  	select 
+  		s.id,
+  		h.id house_id,
+  		h.name house_name,
+  		s.state,
+  		s.ip,
+  		s.port,
+  		s.node
+  	from house h 
+  	left join house_setting s on h.id=s.house_id
+  	where h.zone_id = #{zoneId}
+  	
+  </select>
+  
+  
+  <select id="queryAllActivatedHouseSettings" parameterType="int" resultMap="HouseSetting">
+  	select 
+  		s.id,
+  		h.id house_id,
+  		h.name house_name,
+  		s.state,
+  		s.ip,
+  		s.port,
+  		s.node
+  	from house h 
+  	left join house_setting s on h.id=s.house_id 
+  	where h.zone_id = #{zoneId} and s.state = 1
+  </select>
+  
+  
+  <insert id="insertHouseSetting" parameterType="HouseSetting" >
+  	insert into house_setting 
+  	(id,house_id,state,ip,port,node)
+  	values (#{id},#{houseId},1,#{ip},#{port},#{node})
+  </insert>
+  
+  <update id="updateHouseSetting" parameterType="HouseSetting">
+  	update house_setting 
+  	set	state = 1,
+  		ip = #{ip},
+  		port = #{port},
+  		node = #{node}
+  	where id = #{id} 
+  </update>
+  
+  
+  <update id="setOffhouseSetting" parameterType="int">
+  	update house_setting
+  	set state = 0
+  	where id = #{id}
+  </update>
+  
+<!-- TODO   -->
+  <select id="queryClimaticSetting" parameterType="int" resultMap="ClimaticSetting">
+  	select 	c.id,
+  			c.zone_id,
+  			c.ip,
+  			c.port
+  			
+  	from  climatic_setting c
+  	
+  	where c.zone_id = #{zoneId} and c.is_del = 0
+  	limit 1
+  
+  </select>
+
+	<select id="queryNodesByScId" resultMap="NodeSetting" parameterType="int">
+		select * from climatic_node_setting where cs_id = #{id}
+	</select>
+  
+  
+  <select id="queryAllClimaticDataType" resultMap="ClimaticDataType">
+  	select 
+  		id ,
+		name ,
+		property_name 
+  	from climatic_date_type
+  	where is_del = 0
+  </select>
+  
+  <insert id="insertClimaticSetting" parameterType="ClimaticSetting" useGeneratedKeys="true" keyProperty="id">
+  	insert into climatic_setting 
+  	(zone_id,ip,port) 
+  	values 
+	(#{zoneId},#{ip},#{port})
+  </insert>
+  
+  <!-- 批量插入节点 -->
+  <insert id="insertNodeSettings" parameterType="list">
+  	insert into climatic_node_setting 
+  		(node_position,channel1,channel2,channel3,channel4,cs_id)
+  	values 
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.nodePosition},#{item.channel1},#{item.channel2},#{item.channel3},#{item.channel4},#{item.csId})
+  	</foreach>
+  </insert>
+  
+  <!-- 插入一个节点 -->
+  <insert id="insertNodeSetting" parameterType="NodeSetting" useGeneratedKeys="true" keyProperty="id">
+  	insert into climatic_node_setting 
+  		(node_position,channel1,channel2,channel3,channel4,cs_id)
+  	values 
+  		(#{nodePosition},#{channel1},#{channel2},#{channel3},#{channel4},#{csId})
+  </insert>
+  
+  
+  <update id="updateClimaticSetting" parameterType="ClimaticSetting">
+  	update climatic_setting 
+  	set 
+  		ip = #{ip},
+  		port = #{port}
+  	where id = #{id}
+  </update>
+  
+  <!--批量更新node设置  -->
+  <update id="updateNodeSettings" parameterType="list">
+  	<foreach collection="list" item="item" separator=";">
+  		update climatic_node_setting 
+  		set
+  			node_position = #{item.nodePosition},
+  			channel1 = #{item.channel1},
+  			channel2 = #{item.channel2},
+  			channel3 = #{item.channel3},
+  			channel4 = #{item.channel4}
+  		where id = #{item.id}
+  	</foreach>
+  </update>
+  <!-- 更新node设置 -->
+  <update id="updateNodeSetting" parameterType="NodeSetting">
+  		update climatic_node_setting 
+  		set
+  			node_position = #{nodePosition},
+  			channel1 = #{channel1},
+  			channel2 = #{channel2},
+  			channel3 = #{channel3},
+  			channel4 = #{channel4}
+  		where id = #{id}
+  </update>
+  
+</mapper>

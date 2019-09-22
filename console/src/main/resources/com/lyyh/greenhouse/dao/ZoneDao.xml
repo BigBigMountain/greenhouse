@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.ZoneDao">
+	<resultMap type="Zone" id="zone">
+		<id column="id" property="zoneId" />
+		<result column="name" property="zoneName" />
+		<result column="address" property="zoneAddr" />
+		<result column="ipv4" property="zoneIp" />
+	</resultMap>
+
+
+	<select id="queryAll" resultMap="zone">
+		select * from zone where is_del = 0
+	</select>
+
+	<insert id="save" parameterType="Zone">
+		insert into zone
+			(name,address,ipv4)
+		values
+			(#{zoneName},#{zoneAddr},#{zoneIp})
+	</insert>
+
+	<update id="update" parameterType="Zone">
+		update zone
+		set
+			name=#{zoneName},
+			address=#{zoneAddr},
+			ipv4=#{zoneIp}
+		where id=#{zoneId}
+	</update>
+
+	<!-- 
+		<delete id="delZone" parameterType="int"> 
+			delete from zone where id=#{zoneId} 
+		</delete> 
+	-->
+
+	<update id="delZone" parameterType="int">
+		update zone set is_del = 1 where id = #{zoneId}
+	</update>
+
+</mapper>

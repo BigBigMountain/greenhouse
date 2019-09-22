@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.backup.dao.EquipmentDao" >
+
+ 	<resultMap type="com.lyyh.tzgk.pojo.TgateWay" id="gateWay">
+ 		<id column="id" property="gateWayId" />
+ 		<result column="gmac" property="macCode" />
+ 		<result column="user_id" property="userId" />
+ 		<result column="name" property="gateWayName" />
+ 	</resultMap>
+ 	
+ 	<resultMap type="com.lyyh.tzgk.pojo.Tvalve" id="valve">
+ 		<id column="id" property="id" />
+ 		<result column="emac" property="emac" />
+ 		<result column="gmac" property="gmac" />
+ 		<result column="eid" property="eid" />
+ 		<result column="position" property="position" />
+ 		<result column="number" property="number" />
+ 		<result column="ename" property="ename" />
+ 		<result column="eqmsg" property="eqmsg" />
+ 		<result column="updatetime" property="updatetime" />
+ 		<result column="collection" property="collection" />
+ 		<result column="eqtypename" property="eqtypename" />
+ 		<result column="rid" property="rid" />
+ 		<result column="rname" property="rname" />
+ 		<result column="fertilizerId" property="fertilizerId" />
+ 	</resultMap>
+ 
+	<select id="getTGateWayByUserId" parameterType="int" resultMap="gateWay">
+		select * from tGateway where user_id = #{userId} and is_del = 0
+	</select>
+	
+	<insert id="addGateWay" parameterType="tgateWay" useGeneratedKeys="true" keyProperty="gateWayId">
+		insert into tGateway
+			( name,gmac,user_id )
+		values
+			( #{gateWayName},#{macCode},#{userId} )
+	</insert>
+	
+	<update id="updateGateWay" parameterType="tgateWay">
+		update tGateway 
+		<set>
+			<if test="gateWayName != null and gateWayName != '' ">
+				name = #{gateWayName},
+			</if>
+			<if test="macCode != null and macCode != '' ">
+				gmac = #{macCode},
+			</if>
+		</set>
+		where id = #{gateWayId}
+		
+	</update>
+	
+	<delete id="deleteGateWay" parameterType="int" >
+		update tGateway set is_del = 1 where id = #{gateWayId}
+	</delete>
+	
+	<update id="updateGmacOfTvalve" >
+		update tvalve set gmac = #{newMacCode} where gmac = #{oldMacCode}
+	</update>
+	
+	
+	
+	<select id="getTvalveListByFertilizerId" parameterType="int" resultMap="valve">
+		select * from tvalve where fertilizerId = #{fertilizerId} and is_del = 0
+	</select>
+	
+	<insert id="addValve" parameterType="tvalve" useGeneratedKeys="true" keyProperty="id">
+		insert into tvalve
+		(
+			emac,gmac,eid,position,number,ename,eqmsg,
+			updatetime,collection,eqtypename,rid,rname,fertilizerId
+		)
+		values
+		(
+			#{emac},#{gmac},#{eid},#{position},#{number},#{ename},#{eqmsg},
+			#{updatetime},#{collection},#{eqtypename},
+			#{rid},#{rname},#{fertilizerId}
+		)
+	</insert>
+	
+	<update id="updateValve" parameterType="tvalve">
+		update tvalve 
+		<set>
+			<if test="emac != null and emac != '' ">
+				emac = #{emac},
+			</if>
+			<if test="gmac != null and gmac != '' ">
+				gmac = #{gmac},
+			</if>
+			<if test="eid != null and eid != '' ">
+				eid = #{eid},
+			</if>
+			<if test="position != null and position != '' ">
+				position = #{position},
+			</if>
+			<if test="number != null and number != '' ">
+				number = #{number},
+			</if>
+			<if test="ename != null and ename != '' ">
+				ename = #{ename},
+			</if>
+			<if test="eqmsg != null and eqmsg != '' ">
+				eqmsg = #{eqmsg},
+			</if>
+			<if test="updatetime != null and updatetime != '' ">
+				updatetime = #{updatetime},
+			</if>
+			<if test="collection != null and collection != '' ">
+				collection = #{collection},
+			</if>
+			<if test="eqtypename != null and eqtypename != '' ">
+				eqtypename = #{eqtypename},
+			</if>
+			<if test="rid != null and rid != '' ">
+				rid = #{rid},
+			</if>
+			<if test="rname != null and rname != '' ">
+				rname = #{rname},
+			</if>
+			<if test="fertilizerId != null and fertilizerId != '' ">
+				fertilizerId = #{fertilizerId},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteTvalve" parameterType="int">
+		update tvalve set is_del = 1 where id = #{id}
+	</delete>
+	
+	<select id="getTGateWayById" parameterType="Integer" resultMap="gateWay">
+		select * from tGateway where id = #{id} and is_del = 0
+	</select>
+	
+	<update id="updateGmacOfTtempAndHumEquip">
+		update tTempAndHumEquip set gmac = #{newMacCode} where gmac = #{oldMacCode}
+	</update>
+	
+</mapper>

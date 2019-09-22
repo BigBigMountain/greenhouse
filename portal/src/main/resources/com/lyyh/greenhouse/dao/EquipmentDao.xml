@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.EquipmentDao" >
+  <resultMap id="Equipment" type="com.lyyh.greenhouse.pojo.Equipment" >
+    <id column="Id" property="id" jdbcType="BIGINT" />
+    <result column="EquipmentCode" property="equipmentCode" jdbcType="VARCHAR" />
+    <result column="EquipmentName" property="equipmentName" jdbcType="VARCHAR" />
+    <result column="State" property="state" jdbcType="BIGINT" />
+    <result column="HouseCode" property="houseId" jdbcType="BIGINT" />
+    <result column="ZoneCode" property="zoneName" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="findAllByVo" parameterType="EquipmentVo" resultMap="Equipment">
+  	select Id,EquipmentCode,EquipmentName,State,HouseCode,ZoneCode
+  	from Equipment_GH
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseCode = #{houseId,jdbcType=BIGINT}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName,jdbcType=VARCHAR}
+  		</if>
+  </select>
+  
+  <update id="changeSatate" parameterType="EquipmentVo">
+  	update Equipment_GH set State = #{state} where Id = #{id}
+  </update>
+	  
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.backup.dao.FertilizerDao" >
+ 
+	<resultMap id="Fertilizer" type="com.lyyh.fertilizer.pojo.Fertilizer">
+		<id column="id" 			property="fertilizerId" />
+		<result column="name" 		property="fertilizerName" />
+		<result column="addr" 		property="addr" />
+		<result column="coordinate" property="coordinate" />
+		<result column="state" 		property="state" />
+		<result column="isOnline" 	property="isOnline" />
+		<result column="desc" 		property="desc" />
+		<result column="prod_date" 	property="prodDate" />
+		<result column="dtu_code" 	property="dtuCode" />
+		<result column="zone_id" 	property="zoneId" />
+		<result column="user_id" 	property="userId" />
+		<result column="time" 		property="time" />
+		<result column="valve_type"	property="valveType" />
+	</resultMap>
+	
+	
+	<select id="queryAll" resultMap="Fertilizer">
+		select * from fertilizer
+	</select>
+	
+	<select id="queryAllByUid" parameterType="int" resultMap="Fertilizer">
+		select * from fertilizer where user_id = #{userId}
+	</select>
+	<select id="queryAllByUsername" parameterType="String" resultMap="Fertilizer">
+		select f.* 
+		from fertilizer f
+		join users u on f.user_id = u.user_id
+		where u.user_name = #{_parameter}
+	</select>
+	
+	<select id="selectByDtuCode" parameterType="String" resultMap="Fertilizer">
+		select * from fertilizer where dtu_code = #{dtuCode}
+	</select>
+	
+	<select id="selectByFertilizerId" parameterType="int" resultMap="Fertilizer">
+		select * from fertilizer where id = #{fertilizerId}
+	</select>
+	
+	<insert id="addFertilizer" parameterType="Fertilizer" useGeneratedKeys="true" keyProperty="fertilizerId">
+		insert into fertilizer 
+			(name,addr,coordinate,[desc],prod_date,dtu_code,user_id,valve_type)
+		values 
+			(#{fertilizerName},#{addr},#{coordinate},#{desc},#{prodDate},#{dtuCode},#{userId},#{valveType})
+	</insert>
+	
+	<!-- <delete id="deleteByFerId" parameterType="int">
+		delete from fertilizer where id = #{fertilizerId}
+	</delete> -->
+	<update id="deleteByFerId" parameterType="int">
+		update fertilizer set user_id = null where id = #{fertilizerId}
+	</update>
+	
+	<update id="updateFertilizer" parameterType="fertilizer">
+		update fertilizer
+		<set>
+			<if test="null != fertilizerName and fertilizerName != ''">
+				name = #{fertilizerName},
+			</if>
+			<if test="null != addr and addr != ''">
+				addr = #{addr},
+			</if>
+			<if test="null != coordinate and coordinate != ''">
+				coordinate = #{coordinate},
+			</if>
+			<if test="null != state">
+				state = #{state},
+			</if>
+			<!-- <if test="null != isOnline">
+				isOnline = #{isOnline},
+			</if> -->
+			<if test="null != desc and desc != ''">
+				[desc] = #{desc},
+			</if>
+			<if test="null != prodDate">
+				prod_date = #{prodDate},
+			</if>
+			<if test="null != dtuCode and dtuCode != ''">
+				dtu_code = #{dtuCode},
+			</if>
+			<if test="null != zoneId and zoneId != 0">
+				zone_id = #{zoneId}
+			</if>
+			<if test="null != valveType">
+				valve_type = #{valveType}
+			</if>
+		</set>
+		where id = #{fertilizerId}
+	</update>
+	
+</mapper>

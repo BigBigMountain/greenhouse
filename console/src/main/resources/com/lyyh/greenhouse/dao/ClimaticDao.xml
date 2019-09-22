@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.ClimaticDao" >
+  
+  <resultMap type="Climatic" id="Climatic">
+  	<id column="Id" property="id"/>
+  	<result column="WindSpeed" property="windSpeed"/>
+  	<result column="WindDirection" property="windDirection"/>
+  	<result column="RainAndSnow" property="rainAndSnow"/>
+  	<result column="Rainfall" property="rainFall"/>
+  	<result column="Pressure" property="pressure"/>
+  	<result column="PM25" property="pm25"/>
+  	<result column="PH" property="ph"/>
+  	<result column="Temperature" property="temperature"/>
+  	<result column="Humidity" property="humidity"/>
+  	<result column="Lighting" property="lighting"/>
+  	<result column="ZoneCode" property="zoneName"/>
+  	<result column="TimeSpan" property="timeSpan"/>
+  </resultMap>
+ <!-- 最新信息 -->
+	<select id="getNewest" parameterType = "string" resultMap = "Climatic">
+	 select top 1 * from ClimaticData_GH
+	  where 1=1 
+	  	 <if test="#{_parameter} != null">
+	  	 	and ZoneCode = #{_parameter}
+	  	 </if>
+	 </select>
+ 
+ <!-- 温度 -->
+  <select id="getTemperatureList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,Temperature  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!-- 湿度 -->
+  <select id="getHumidityList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,Humidity  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!-- 光照 -->
+  <select id="getLightingList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,Lighting  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!-- 气压 -->
+  <select id="getPressureList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,Pressure  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!-- 风速 -->
+  <select id="getWindSpeedList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,WindSpeed  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!--降雨量  -->
+  <select id="getRainFallList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,RainFall  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!-- PH -->
+  <select id="getPHList" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,PH  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ <!-- PM2.5 -->
+  <select id="getPM25List" parameterType="ClimaticVo" resultMap="Climatic">
+  	 select TimeSpan,PM25  
+  	 from
+	  	<if test="null != start and null != end ">
+	  		ClimaticData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	ClimaticData_GH
+  		</if>
+  	 where 1=1 
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+ 
+</mapper>

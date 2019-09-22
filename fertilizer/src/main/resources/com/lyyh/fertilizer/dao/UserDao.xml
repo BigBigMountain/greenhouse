@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.dao.UserDao" >
+  <resultMap id="User" type="com.lyyh.greenhouse.pojo.User" >
+    <id column="user_id" property="userId" />
+    <result column="user_name" 	property="username" />
+    <result column="user_realname" 	property="realname" />
+    <result column="user_password" 		property="password" />
+    <result column="company" 	property="company" />
+    <result column="zone_name" 	property="zoneName" />
+    <result column="zone_id" 	property="zoneId" />
+    <result column="type" 	property="controllType" />
+  </resultMap>
+  <select id="findByUsername" parameterType="string" resultMap="User">
+  <!-- 	select u.*,z.zone_name
+  	from users u
+  	join zone z on z.zone_id = u.zone_id
+  	where user_name = #{_parameter,jdbcType=VARCHAR} -->
+  	
+  	select * from users where user_name = #{_parameter,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertOne" parameterType="user" useGeneratedKeys="true" keyProperty="userId">
+  	insert into users 
+  	(user_name,user_realname,user_password,zone_id,company)
+  	values
+  	(#{username},#{realname},#{password},#{zoneId},#{company})
+  </insert>
+</mapper>

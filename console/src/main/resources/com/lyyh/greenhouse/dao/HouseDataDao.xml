@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.HouseDataDao" >
+
+<!--温度结果映射1,2  -->
+  <resultMap id="Temperature1" type="TemperatureVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="Temperature" property="temperature" />
+  </resultMap>
+  <resultMap id="Temperature2" type="TemperatureVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="Temperature2" property="temperature" />
+  </resultMap>
+  
+<!--湿度结果映射1,2  -->
+  <resultMap id="Humidity1" type="HumidityVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="Humidity" property="humidity" />
+  </resultMap>
+  <resultMap id="Humidity2" type="HumidityVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="Humidity2" property="humidity" />
+  </resultMap>
+  
+<!--光照结果映射  -->
+  <resultMap id="Lighting" type="LightingVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="Lighting" property="lighting" />
+  </resultMap>
+  
+<!--CO2结果映射  -->
+  <resultMap id="CO2" type="CO2Vo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="CO2" property="co2" />
+  </resultMap>
+  
+<!--土壤温度结果映射  -->
+  <resultMap id="SoilTemperature" type="SoilTemperatureVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="SoilTemperature" property="soilTemperature" />
+  </resultMap>
+<!--土壤湿度结果映射  -->
+  <resultMap id="SoilHumidity" type="SoilHumidityVo" >
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="SoilHumidity" property="soilHumidity" />
+  </resultMap>
+  
+<!--HouseData结果映射  -->
+<resultMap id="HouseData" type="HouseData" >
+	<id column="Id" property="id" jdbcType="BIGINT" />
+    <result column="Temperature" property="temperature" />
+    <result column="Temperature2" property="temperature2" />
+    <result column="Humidity" property="humidity" />
+    <result column="Humidity2" property="humidity2" />
+    <result column="Lighting" property="lighting" />
+    <result column="CO2" property="co2" />
+    <result column="SoilTemperature" property="soilTemperature" />
+    <result column="SoilHumidity" property="soilHumidity" />
+    <result column="TimeSpan" property="timeSpan" />
+    <result column="HouseId" property="houseId" />
+    <result column="ZoneCode" property="zoneName" />
+    <result column="ZoneCode" property="zoneName" />
+    
+  </resultMap>
+  
+  
+  <select id="getTemperature1List" parameterType="HouseDataVo" resultMap="Temperature1">
+  	select TimeSpan,Temperature
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getTemperature2List" parameterType="HouseDataVo" resultMap="Temperature2">
+  	select TimeSpan,Temperature2
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getHumidity1List" parameterType="HouseDataVo" resultMap="Humidity1">
+  	select TimeSpan,Humidity
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getHumidity2List" parameterType="HouseDataVo" resultMap="Humidity2">
+  	select TimeSpan,Humidity2
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getLightingList" parameterType="HouseDataVo" resultMap="Lighting">
+  	select TimeSpan,Lighting
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getCO2List" parameterType="HouseDataVo" resultMap="CO2">
+  	select TimeSpan,CO2
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getSoilTemperatureList" parameterType="HouseDataVo" resultMap="SoilTemperature">
+  	select TimeSpan,SoilTemperature
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getSoilHumidityList" parameterType="HouseDataVo" resultMap="SoilHumidity">
+  	select TimeSpan,SoilHumidity
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getNewest" parameterType="HouseDataVo" resultMap="HouseData">
+  	select top 1 *
+  	from HouseData_GH
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  	order by TimeSpan desc
+  </select>
+  
+  
+  <select id="getIndexList" parameterType="HouseDataVo" resultMap="HouseData">
+  	select *
+  	from
+	  	<if test="null != start and null != end ">
+	  		HouseData_His
+	  	</if>
+  		<if test="null == start or null == end">
+  		 	HouseData_GH
+  		</if>
+  	where 1=1
+  		<if test="houseId != null">
+  			and HouseId = #{houseId}
+  		</if>
+  		<if test="zoneName != null">
+  			and ZoneCode = #{zoneName}
+  		</if>
+  		<if test="null != start and null != end">
+  			and TimeSpan &gt; #{start} and TimeSpan &lt; #{end}
+  		</if>
+  </select>
+  
+  <select id="getAllNewestByZoneName" parameterType="String" resultMap="HouseData">
+	select d.*,h.HouseName houseName 
+	from HouseData_GH d 
+	inner join House_GH h 
+	on d.HouseId = h.Id and d.ZoneCode = h.ZoneCode 
+	inner join 
+			(select 
+			 HouseId,max(TimeSpan) TimeSpan 
+			 from HouseData_GH 
+			 where ZoneCode = #{_parameter} 
+			 group by HouseId) b 
+	on d.TimeSpan = b.TimeSpan
+	order by HouseId
+  
+  </select>
+  
+  
+  
+</mapper>

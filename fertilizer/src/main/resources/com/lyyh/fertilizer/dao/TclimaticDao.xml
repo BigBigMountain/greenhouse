@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.dao.TclimaticDao" >
+	
+	<resultMap id="Tclimatic" type="com.lyyh.tzgk.pojo.TclimaticData">
+		<id column="id" property="id"/>
+		<result column="gmac" property="gmac"/>
+		<result column="emac" property="emac"/>
+		<result column="msg" property="msg"/>
+		<result column="date" property="time"/>
+	</resultMap>
+	
+	<resultMap id="TtempAndHum" type="com.lyyh.tzgk.pojo.TtempAndHum">
+		<id column="id" property="id"/>
+		<result column="emac" property="emac"/>
+		<result column="msg" property="msg"/>
+		<result column="date" property="time"/>
+	</resultMap>
+	
+	<select id="selectNewestByUserName" parameterType="String" resultMap="Tclimatic">
+		select top 1 ed.*
+		from users u
+		join tGateway g on g.user_id = u.user_id
+		join tequipmentData ed on ed.emac = g.gmac
+		where u.user_name = #{userName}
+		order by ed.date desc
+		
+	</select>
+	
+	<select id="queryClimaticByVo" parameterType = "Climatic" resultMap="Tclimatic">
+		select ed.*
+		from users u
+		join tGateway g on g.user_id = u.user_id
+		join tequipmentData ed on ed.emac = g.gmac
+		where u.user_name = #{username}
+		and ed.date between #{start} and #{end}
+		order by ed.date
+	</select>
+	
+	<select id="selectNewestTempAndHumByUserName" resultMap="TtempAndHum" parameterType="String">
+		select top 1 ed.* 
+		from users u
+		join tTempAndHumEquip te on te.user_id = u.user_id
+		join tequipmentData ed on ed.emac = te.emac
+		where u.user_name = #{userName}
+		order by ed.date desc
+	</select>
+	
+	<select id="queryTAndHByVo" resultMap="TtempAndHum" parameterType = "Climatic">
+		select ed.*
+		from users u
+		join tTempAndHumEquip th on th.user_id = u.user_id
+		join tequipmentData ed on ed.emac = th.emac
+		where u.user_name = #{username}
+		and ed.date between #{start} and #{end}
+	</select>
+
+</mapper>

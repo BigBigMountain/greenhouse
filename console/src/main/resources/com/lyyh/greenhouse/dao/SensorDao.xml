@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.SensorDao">
+	<resultMap id="Sensor" type="com.lyyh.greenhouse.pojo.Sensor">
+		<id column="id" property="id" />
+		<result column="type_id" property="typeId" />
+		<result column="name" property="name" />
+		<result column="zone_id" property="zoneId" />
+		<result column="house_id" property="houseId" />
+		<result column="page_sort" property="pageSort" />
+		<result column="excel_sort" property="excelSort" />
+		<result column="create_time" property="createTime" />
+		<result column="is_del" property="isDel" />
+	</resultMap>
+	<resultMap id="SensorVo" type="com.lyyh.greenhouse.pojo.vo.SensorVo">
+		<id column="id" property="id" />
+		<result column="type_id" property="typeId" />
+		<result column="name" property="name" />
+		<result column="zone_id" property="zoneId" />
+		<result column="house_id" property="houseId" />
+		<result column="gateway_id" property="gatewayId" />
+		<result column="position" property="position" />
+		<result column="page_sort" property="pageSort" />
+		<result column="excel_sort" property="excelSort" />
+		<result column="channel" property="channel" />
+	</resultMap>
+
+	<resultMap id="SensorType" type="com.lyyh.greenhouse.pojo.SensorType" >
+		<id column="type_id" property="id" />
+		<result column="name" property="name" />
+		<result column="data_type" property="dataType" />
+		<result column="data_min" property="dataMin" />
+		<result column="data_max" property="dataMax" />
+		<result column="range_min" property="rangeMin" />
+		<result column="range_max" property="rangeMax" />
+		<result column="unit" property="unit" />
+		<result column="image" property="image" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="is_del" property="isDel" />
+	</resultMap>
+	
+	<resultMap id="ClimaticSetting" type="com.lyyh.greenhouse.pojo.ClimaticSetting">
+		<id column="id" property="id" />
+		<result column="zone_id" property="zoneId"/>
+		<result column="zone_name" property="zoneName"/>
+		<result column="ip" property="ip"/>
+		<result column="port" property="port"/>
+		<collection property="nodes" select="queryNodesByScId" column="id"></collection>
+	</resultMap>
+	
+	<resultMap id="ClimaticDataType" type="com.lyyh.greenhouse.pojo.ClimaticDataType">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="property_name" property="propertyName"/>
+		<result column="is_del" property="isDel"/>
+	</resultMap>
+	
+	<resultMap id="NodeSetting" type="com.lyyh.greenhouse.pojo.NodeSetting">
+		<id column="id" property="id"/>
+		<result column="node_position" property="nodePosition"/>
+		<result column="channel1" property="channel1"/>
+		<result column="channel2" property="channel2"/>
+		<result column="channel3" property="channel3"/>
+		<result column="channel4" property="channel4"/>
+		<result column="id" property="id"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="Sensor" useGeneratedKeys="true" keyProperty="id">
+		insert into sensor 
+		(
+			name,type_id,create_time
+			<if test="houseId != null">
+				,house_id
+			</if>
+			<if test="zoneId != null">
+				,zone_id
+			</if>
+			<if test="excelSort != null">
+				,excel_sort
+			</if>
+			<if test="pageSort != null">
+				,page_sort
+			</if>
+		)
+		values
+		(
+			#{name},#{typeId},now()
+			<if test="houseId != null">
+				,#{houseId}
+			</if>
+			<if test="zoneId != null">
+				,#{zoneId}
+			</if>
+			<if test="excelSort != null">
+				,#{excelSort}
+			</if>
+			<if test="pageSort != null">
+				,#{pageSort}
+			</if>
+		)
+		
+	</insert>
+
+	<update id="delete" parameterType="int">
+		update sensor set is_del = 1 where id = #{id}
+	</update>
+	
+	<update id="update" parameterType="Sensor">
+		update sensor set 
+			type_id = #{typeId},
+			name = #{name}
+			<if test="houseId != null">
+				,house_id = #{houseId}
+			</if>
+			<if test="zoneId != null">
+				,zone_id = #{zoneId}
+			</if>
+			<if test="excelSort != null">
+				,excel_sort = #{excelSort}
+			</if>
+			<if test="pageSort != null">
+				,page_sort = #{pageSort}
+			</if>
+		where id = #{id}
+	</update>
+
+	<select id = "selectById" parameterType="Integer" resultMap="Sensor">
+		select * from sensor where id = #{id}
+	</select>
+
+	<select id="selectAll" resultMap="Sensor">
+		select * from sensor where is_del = 0;
+	</select>
+	
+	<select id="selectByHouseId" resultMap="Sensor">
+		select * from sensor where is_del = 0 and house_id = #{houseId};
+	</select>
+	
+	<select id="selectTypeList" resultMap="SensorType">
+		select * from sensor_type where is_del = 0;
+	</select>
+	
+	<insert id="insertType" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into sensor_type 
+			(name,data_type,data_min,data_max,range_min,range_max,unit,create_time)
+		values
+			(#{name},#{dataType},#{dataMin},#{dataMax},#{rangeMin},#{rangeMax},#{unit},now())
+	</insert>
+	<update id="updateType">
+		update sensor_type 
+		<set>
+			name = #{name},
+			data_type = #{dataType},
+			data_min = #{dataMin},
+			data_max = #{dataMax},
+			range_min = #{rangeMin},
+			range_max = #{rangeMax},
+			unit = #{unit},
+		</set>
+		where id = #{id}
+	</update>
+	<update id="deleteType" parameterType="int">
+		update sensor_type set is_del = 1 where id = #{id}
+	</update>
+	
+	<select id="selectVoByHouseId" parameterType="int" resultMap="SensorVo">
+		select 
+			s.id,s.type_id,s.name,s.zone_id,s.house_id,s.page_sort,s.excel_sort,
+			nc.kl_gateway_id gateway_id,nc.position,nc.channel
+		from sensor s
+		left join node_config nc on nc.sensor_id = s.id
+		where s.house_id = #{houseId} and s.is_del = 0
+	</select>
+	
+	<select id="queryAllClimaticDataType" resultMap="ClimaticDataType">
+		select 
+			id ,
+			name ,
+			property_name 
+		from climatic_date_type
+		where is_del = 0
+	</select>
+	
+	<!-- TODO   -->
+	<select id="queryClimaticSetting" parameterType="int" resultMap="ClimaticSetting">
+	  	select 	c.id,
+	  			c.zone_id,
+	  			c.ip,
+	  			c.port
+	  	from  climatic_setting c
+	  	where c.zone_id = #{zoneId}
+	</select>
+	
+	<delete id="deleteClimaticNodeById" parameterType="int">
+		delete from climatic_node_setting where id = #{id}
+	</delete>
+	
+	<select id="queryNodesByScId" resultMap="NodeSetting" parameterType="int">
+		select * from climatic_node_setting where cs_id = #{id}
+	</select>
+	
+	<insert id="insertClimaticSetting" parameterType="ClimaticSetting" useGeneratedKeys="true" keyProperty="id">
+	 	insert into climatic_setting 
+	 		(zone_id,ip,port) 
+	 	values 
+			(#{zoneId},#{ip},#{port})
+	</insert>
+	
+	 <!-- 批量插入节点 -->
+	<insert id="insertNodeSettings" parameterType="list">
+		insert into climatic_node_setting 
+			(node_position,channel1,channel2,channel3,channel4,cs_id)
+		values 
+		<foreach collection="list" item="item" separator=",">
+			(#{item.nodePosition},#{item.channel1},#{item.channel2},#{item.channel3},#{item.channel4},#{item.csId})
+		</foreach>
+	</insert>
+	
+	<update id="updateClimaticSetting" parameterType="ClimaticSetting">
+	  	update climatic_setting 
+	  	set 
+	  		ip = #{ip},
+	  		port = #{port}
+	  	where id = #{id}
+	</update>
+	
+	  <!-- 插入一个节点 -->
+	<insert id="insertNodeSetting" parameterType="NodeSetting" useGeneratedKeys="true" keyProperty="id">
+		insert into climatic_node_setting 
+			(node_position,channel1,channel2,channel3,channel4,cs_id)
+		values 
+			(#{nodePosition},#{channel1},#{channel2},#{channel3},#{channel4},#{csId})
+	</insert>
+	
+	 <!--批量更新node设置  -->
+	<update id="updateNodeSettings" parameterType="list">
+		<foreach collection="list" item="item" separator=";">
+			update climatic_node_setting 
+			set
+				node_position = #{item.nodePosition},
+				channel1 = #{item.channel1},
+				channel2 = #{item.channel2},
+				channel3 = #{item.channel3},
+				channel4 = #{item.channel4}
+			where id = #{item.id}
+		</foreach>
+	</update>
+	
+	 <!-- 更新node设置 -->
+  <update id="updateNodeSetting" parameterType="NodeSetting">
+  		update climatic_node_setting 
+  		set
+  			node_position = #{nodePosition},
+  			channel1 = #{channel1},
+  			channel2 = #{channel2},
+  			channel3 = #{channel3},
+  			channel4 = #{channel4}
+  		where id = #{id}
+  </update>
+  
+  
+</mapper>

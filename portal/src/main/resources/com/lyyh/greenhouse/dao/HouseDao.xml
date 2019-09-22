@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.HouseDao">
+	<resultMap id="House" type="com.lyyh.greenhouse.pojo.House">
+		<id column="id" property="id" />
+		<result column="number" property="number" />
+		<result column="name" property="name" />
+		<result column="zone_id" property="zoneId" />
+		<result column="zone_name" property="zoneName" />
+	</resultMap>
+	<select id="findAllByZoneId" parameterType="int" resultMap="House">
+		select *
+		from house h
+		where zone_id = #{zoneId}
+	</select>
+
+
+	<select id="getHouseName" resultType="String">
+		select name from house
+		where id = #{id}
+	</select>
+
+	<select id="selectById" parameterType="int" resultMap="House">
+		select *
+		from house where id = #{id}
+	</select>
+
+	<select id="findAllByLedProgram" parameterType="int" resultMap="House">
+		select *
+		from house h
+		join led_house_link lhl on lhl.house_id = h.id
+		where h.is_del = 0 and lhl.led_program_id = #{programId}
+	</select>
+</mapper>

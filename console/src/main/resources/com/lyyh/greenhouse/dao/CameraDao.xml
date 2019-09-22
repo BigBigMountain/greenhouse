@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.CameraDao" >
+  <resultMap id="Camera2" type="com.lyyh.greenhouse.pojo.Camera2" >
+    <id 	property="cameraId" 		column="camera_id"/>
+    <result property="cameraNumber"		column="camera_number" />
+    <result property="cameraName" 		column="camera_name" />
+    <result property="cameraIp" 		column="zone_ip"/>				<!-- TODO 此字段来自zone -->
+    <result property="cameraHttpPort" 	column="camera_httpPort" />
+    <result property="cameraUsername" 	column="camera_username" />
+    <result property="cameraPassword" 	column="camera_password" />
+    <result property="cameraPort" 		column="camera_port" />
+    <result property="nvrId" 			column="nvr_id" />
+    <result property="houseId"			column="house_id" />
+    <result property="zoneId" 			column="zone_id" />
+  </resultMap>
+  
+  <resultMap type="Nvr2" id="Nvr">
+  	<id property="nvrId" 			column="nvr_id"/>
+  	<result property="nvrName" 		column="nvr_name"/>
+  	<result property="nvrIp" 		column="zone_ip"/>			<!-- TODO 此字段来自zone -->
+  	<result property="nvrPort" 		column="nvr_port"/>
+  	<result property="nvrUsername" 	column="nvr_username"/>
+  	<result property="nvrPassword" 	column="nvr_password"/>
+  	<result property="nvrState" 	column="nvr_state"/>
+  	<result property="zoneId" 		column="zone_id"/>
+  
+  </resultMap>
+  <select id="queryAllByHouseId" parameterType="int" resultMap="Camera2">
+  	select 
+  		c.* ,
+  		z.zone_ip
+  	from camera c 
+  	join zone z on c.zone_id = z.zone_id
+  	where c.house_id = #{houseId}
+  </select>
+  
+  
+  <select id="queryAllByZoneId" parameterType="int" resultMap="Camera2">
+  	select 
+  		c.* ,
+  		z.zone_ip
+  	from camera c 
+  	join zone z on c.zone_id = z.zone_id 
+  	where c.zone_id = #{zoneId}
+  </select>
+  
+  <select id="getAllNvrByZoneId" parameterType="int" resultMap="Nvr">
+  	select 
+  		n.*,
+  		z.zone_ip
+  	from nvr n
+  	join zone z on n.zone_id = z.zone_id
+  	where n.zone_id = #{zoneId}
+  </select>
+  
+  <insert id="saveCamera" parameterType="Camera2">
+  	insert into camera 
+  	(camera_number,camera_name,camera_httpPort,camera_username,camera_password,camera_port,house_id,nvr_id,zone_id)
+  	values
+  	(#{cameraNumber},#{cameraName},#{cameraHttpPort},#{cameraUsername},#{cameraPassword},#{cameraPort},#{houseId},#{nvrId},#{zoneId})
+  </insert>
+  
+  <update id="updateCamera" parameterType="Camera2">
+  	update camera 
+  	<trim prefix="set" suffixOverrides=",">
+  		<if test="cameraNumber != null">
+  			camera_number = #{cameraNumber},
+  		</if>
+  		<if test="cameraName != null">
+  			camera_name = #{cameraName},
+  		</if>
+  		<if test="cameraHttpPort != null">
+  			camera_httpPort = #{cameraHttpPort},
+  		</if>
+  		<if test="cameraUsername != null">
+  			camera_username = #{cameraUsername},
+  		</if>
+  		<if test="cameraPassword != null">
+  			camera_password = #{cameraPassword},
+  		</if>
+  		<if test="cameraPort != null">
+  			camera_port = #{cameraPort},
+  		</if>
+  		<if test="houseId != null">
+  			house_id = #{houseId},
+  		</if>
+  		<if test="nvrId != null">
+  			nvr_id = #{nvrId},
+  		</if>
+  	</trim>
+  	where camera_id = #{cameraId}
+  </update>
+  
+  <delete id="delCameraByCameraId" parameterType="int">
+  	delete from camera where camera_id = #{cameraId}
+  </delete>
+  
+</mapper>

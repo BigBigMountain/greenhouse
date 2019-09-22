@@ -1,0 +1,65 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/task
+   		http://www.springframework.org/schema/task/spring-task-4.0.xsd
+		">
+		
+		
+		
+		<!-- 扫描 @Controller -->
+		<context:component-scan base-package="com.lyyh.greenhouse.controller"/>
+		
+		 
+		<!-- 处理器映射器 适配器 -->
+		<mvc:annotation-driven conversion-service="conversionServiceFactory"/>
+		
+		<!-- 转换工厂 -->
+		<bean id="conversionServiceFactory" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+			<property name="converters">
+				<set>
+					<bean class="com.lyyh.common.conversion.StringBlandConversion"></bean>
+				</set>
+			</property>
+		</bean>
+		
+		<!-- 上传图片 -->
+		<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
+		
+		<!-- 视图解析器 -->
+		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/portal/"/>
+			<property name="suffix" value=".jsp"/>
+		</bean>
+		
+		<!--  简单全局异常处理 
+		<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		    <property name="exceptionMappings">
+		        <map>
+		            <entry key="ResourceNotFoundException" value="error/resourceNotFoundError" />
+		            <entry key=".DataAccessException" value="error/dataAccessError" />
+		        </map>
+		    </property>
+		    <property name="statusCodes">
+		        <map>
+		            <entry key="error/resourceNotFoundError" value="404" />
+		            <entry key="error/dataAccessError" value="500" />
+		        </map>
+		    </property>
+		</bean>  -->
+		
+</beans>

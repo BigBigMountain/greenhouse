@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.UserDao" >
+  <resultMap id="User" type="com.lyyh.greenhouse.pojo.User" >
+    <id column="id" property="userId" />
+    <result column="name" 	property="username" />
+    <result column="realname" 	property="realname" />
+    <result column="password" 		property="password" />
+    <result column="zone_name" 	property="zoneName" />
+    <result column="zone_id" 	property="zoneId" />
+  </resultMap>
+  <select id="findByUsername" parameterType="string" resultMap="User">
+  	select u.*,z.name 
+  	from users u 
+  	left join zone z on z.id = u.zone_id
+  	where u.name = #{_parameter,jdbcType=VARCHAR}
+  </select>
+  <select id="queryAll" resultMap="User">
+  	select * from users 
+  	
+  </select>
+  
+  <insert id="saveUser" parameterType="User">
+  	insert into users 
+  		(name,realname,password,zone_id)
+  	values 
+  		(#{username},#{realname},#{password},#{zoneId})
+  </insert>
+  
+  <update id="updateUser" parameterType="User">
+  	update users set
+  		name = #{username},
+  		realname = #{realname},
+  		password = #{password},
+  		zone_id = #{zoneId}
+  	where id = #{userId}
+  </update>
+  
+  <delete id="delById" parameterType="int">
+  	delete from users where id=#{userId}
+  </delete>
+</mapper>

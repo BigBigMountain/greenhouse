@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.ControllerSettingDao">
+	<resultMap id="Controller" type="com.lyyh.greenhouse.pojo.GhController">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="ip" property="ip" />
+		<result column="port" property="port" />
+		<result column="house_id" property="houseId" />
+		<result column="house_name" property="houseName" />
+		<result column="zone_id" property="zoneId" />
+		<result column="zone_name" property="zoneName" />
+	</resultMap>
+	<select id="queryControllersByZoneId" parameterType="Integer" resultMap="Controller">
+		select
+			*
+		from controller c
+		where zone_id = #{zoneId}
+	</select>
+	
+	<select id="queryHouseLeftJoinControllerByZoneId" parameterType="int" resultMap="Controller">
+		select 
+			c.id,
+			c.name,
+			c.ip,
+			c.port,
+			h.name house_name,
+			h.id house_id
+		from house h 
+		left join controller c on c.house_id = h.id
+		where h.zone_id = #{zoneId} and h.is_del = 0
+	</select>
+	
+	<insert id="saveController" parameterType="GhController">
+		insert into controller 
+		(name,ip,port,house_id,zone_id)
+		values 
+		(#{name},#{ip},#{port},#{houseId},#{zoneId})
+	</insert>
+	
+	<update id="updateController" parameterType="GhController">
+		update controller set 
+		<trim suffixOverrides=",">
+			<if test="ip != null">
+				ip = #{ip},
+			</if>
+			<if test="port != null">
+				port = #{port},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+		</trim>
+		where id = #{id}
+	</update>
+	
+	<select id="queryControllerById" parameterType="int" resultMap="Controller">
+		select *
+		from controller
+		where id = #{id}
+	</select>
+</mapper>

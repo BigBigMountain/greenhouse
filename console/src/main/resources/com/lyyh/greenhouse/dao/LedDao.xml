@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.LedDao" >
+
+	<select id="listAll" parameterType="Integer" resultType="LedProgram">
+		select * from LedProgram 
+		where 1=1 
+		<if test="null != _parameter and _parameter != 0">
+			and z_id = #{_parameter}
+		</if>
+	</select>
+  
+	<!--插入program  -->
+	<insert id="addLedProgram" parameterType="LedProgram" useGeneratedKeys="true" keyProperty="p_id">
+		insert into ledProgram 
+		(z_id,p_name,p_info,p_state,p_ip,p_width,p_height,p_colourType) 
+		values  
+		(#{z_id},#{p_name},#{p_info},#{p_state},#{p_ip},#{p_width},#{p_height},#{p_colourType})	
+	</insert>
+	
+	<insert id="addLedTable" parameterType="LedTable" useGeneratedKeys="true" keyProperty="t_id">
+		insert into LedTable 
+		(p_id,t_x,t_y,t_w,t_h,t_os,t_r,t_c,t_s,t_t) 
+		values  
+		(#{p_id},#{t_x},#{t_y},#{t_w},#{t_h},#{t_os},#{t_r},#{t_c},#{t_s},#{t_t})	
+	</insert>
+	
+	<!--插入LedHouse  -->
+	<insert id="addLedHouse" parameterType="LedHouse">
+		insert into LedHouse 
+		(p_id,h_t1,h_t2,h_h1,h_h2,h_l,h_c,h_st,h_sh) 
+		values  
+		(#{p_id},#{h_t1},#{h_t2},#{h_h1},#{h_h2},#{h_l},#{h_c},#{h_st},#{h_sh})	
+	</insert>
+	
+	<!--插入LedClimatic  -->
+	<insert id="addLedClimatic" parameterType="LedClimatic">
+		insert into LedClimatic 
+		
+		(p_id,c_t,c_tx,c_ty,c_h,c_hx,c_hy,c_l,c_lx,c_ly,c_rs,c_rsx,c_rsy,c_rf,c_rfx,c_rfy,c_ws,c_wsx,c_wsy,c_wd,c_wdx,c_wdy,c_p,c_px,c_py,c_pm,c_pmx,c_pmy,c_ph,c_phx,c_phy) 
+		values 
+		(#{p_id},#{c_t},#{c_tx},#{c_ty},#{c_h},#{c_hx},#{c_hy},#{c_l},#{c_lx},#{c_ly},#{c_rs},#{c_rsx},#{c_rsy},#{c_rf},#{c_rfx},#{c_rfy},#{c_ws},#{c_wsx},#{c_wsy},#{c_wd},#{c_wdx},#{c_wdy},#{c_p},#{c_px},#{c_py},#{c_pm},#{c_pmx},#{c_pmy},#{c_ph},#{c_phx},#{c_phy})
+	</insert>
+	
+	
+<!-- 更新 -->	 
+	<update id="updateProgram" parameterType="LedProgram">
+		update LedProgram
+		set 
+			p_name = #{p_name},
+			p_info = #{p_info},
+			p_state = #{p_state},
+			p_ip = #{p_ip},
+			p_width = #{p_width},
+			p_height = #{p_height},
+			p_colourType = #{p_colourType}
+		where p_id = #{p_id}
+	</update>
+	
+	<update id="updateLedTable" parameterType="LedTable">
+		update LedTable
+		set 
+			t_x = #{t_x},
+			t_y = #{t_y},
+			t_w = #{t_w},
+			t_h = #{t_h},
+			t_os = #{t_os},
+			t_r = #{t_r},
+			t_c = #{t_c},
+			t_s = #{t_s},
+			t_t = #{t_t}
+		where t_id = #{t_id}
+	</update>
+	
+	<update id="updateLedHouse" parameterType="LedHouse">
+		update LedHouse 
+		set 
+			h_t1 = #{h_t1},
+			h_t2 = #{h_t2},
+			h_h1 = #{h_h1},
+			h_h2 = #{h_h2},
+			h_l = #{h_l},
+			h_c = #{h_c},
+			h_st = #{h_st},
+			h_sh = #{h_sh}
+		where h_id = #{h_id}
+	</update>
+	
+	<update id="updateLedClimatic" parameterType="LedClimatic">
+		update LedClimatic
+		set 
+			c_t = #{c_t}, c_tx = #{c_tx}, c_ty = #{c_ty},
+			c_h = #{c_h},c_hx = #{c_hx},c_hy = #{c_hy},
+			c_l = #{c_l},c_lx = #{c_lx},c_ly = #{c_ly},
+			c_rs = #{c_rs},c_rsx = #{c_rsx},c_rsy = #{c_rsy},
+			c_rf = #{c_rf},c_rfx = #{c_rfx},c_rfy = #{c_rfy},
+			c_ws = #{c_ws},c_wsx = #{c_wsx},c_wsy = #{c_wsy},
+			c_wd = #{c_wd},c_wdx = #{c_wdx},c_wdy = #{c_wdy},
+			c_p = #{c_p},c_px = #{c_px},c_py = #{c_py},
+			c_pm = #{c_pm},c_pmx = #{c_pmx},c_pmy = #{c_pmy},
+			c_ph = #{c_ph},c_phx = #{c_phx},c_phy = #{c_phy}
+		
+		where c_id = #{c_id}
+	</update>
+	
+<!--查  -->	 
+	 <select id="findProgramByPid" parameterType="Integer" resultType="LedProgram">
+		select * from LedProgram 
+		where 1=1 
+		<if test="null != _parameter and _parameter != 0">
+			and p_id = #{_parameter}
+		</if>
+	</select>
+	
+	<select id="findLedTableByPid" parameterType="Integer" resultType="LedTable">
+		select * from LedTable 
+		where 1=1 
+		<if test="null != _parameter and _parameter != 0">
+			and p_id = #{_parameter}
+		</if>
+	</select>
+	 
+	<select id="findLedHouseByPid" parameterType="Integer" resultType="LedHouse">
+		select * from LedHouse 
+		where p_id = #{_parameter} 
+	</select>
+	
+	<select id="findLedClimaticByPid" parameterType="Integer" resultType="LedClimatic">
+		select * from LedClimatic 
+		where p_id = #{_parameter} 
+	</select>
+	
+	
+<!-- 删 -->
+	<delete id="delLedHouseByPid" parameterType="int">
+		delete from LedHouse 
+		where p_id = #{_parameter}
+	</delete>
+	
+	<delete id="delLedTableByPid" parameterType="int">
+		delete from LedTable 
+		where p_id = #{p_id}
+	</delete>
+	
+	<delete id="delLedClimaticByPid" parameterType="int">
+		delete from LedClimatic 
+		where p_id = #{p_id}
+	</delete>
+	
+	<delete id="delLedProgramByPid" parameterType="int">
+		delete from LedProgram 
+		where p_id = #{p_id}
+	</delete>
+</mapper>

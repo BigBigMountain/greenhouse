@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.HouseDao">
+	<resultMap id="House" type="com.lyyh.greenhouse.pojo.House">
+		<id column="id" property="id" />
+		<result column="number" property="number" />
+		<result column="name" property="name" />
+		<result column="zone_id" property="zoneId" />
+		<result column="zone_name" property="zoneName" />
+	</resultMap>
+	<select id="findAllByZoneId" parameterType="int" resultMap="House">
+		select * from house where zone_id = #{zoneId} and is_del = 0
+
+	</select>
+
+	<insert id="saveHouse" parameterType="house">
+		insert into house (number,name,zone_id) values
+		(#{number},#{name},#{zoneId})
+	</insert>
+
+	<update id="updateHouse" parameterType="house">
+		update house
+		set
+		number=#{number},
+		name=#{name}
+		where id=#{id}
+	</update>
+
+<!-- 
+	<delete id="delHouseById" parameterType="int"> 
+		delete from house where house_id = #{houseId} 
+	</delete> 
+-->
+	<update id="delHouseById" parameterType="int">
+		update house set is_del = 1 where id = #{id} 
+	</update>
+
+	<select id="queryById" parameterType="int" resultMap="House">
+		select * from house where id = #{id}
+	</select>
+</mapper>

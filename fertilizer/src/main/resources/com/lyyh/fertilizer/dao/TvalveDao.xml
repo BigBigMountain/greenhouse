@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.dao.TvalveDao" >
+  <resultMap id="Tvalve" type="com.lyyh.tzgk.pojo.Tvalve" >
+    <id column="id" property="id" />
+    <result column="emac" 	property="emac" />
+    <result column="gmac" 	property="gmac" />
+    <result column="eid" 		property="eid" />
+    <result column="position" 	property="position" />
+    <result column="number" 	property="number" />
+    <result column="ename" 	property="ename" />
+    <result column="eqmsg" 	property="eqmsg" />
+    <result column="updatetime" 	property="updatetime" />
+    <result column="collection" 	property="collection" />
+    <result column="eqtypename" 	property="eqtypename" />
+    <result column="rid" 	property="rid" />
+    <result column="rname" 	property="rname" />
+    <result column="fertilizerId" 	property="fertilizerId" />
+    <result column="dtu_code" 	property="dtuCode" />
+  </resultMap>
+  
+  
+  <select id="queryTvalveByDtuCodeAndNumber" resultMap="Tvalve">
+  	select v.*,f.dtu_code
+  	from tvalve v 
+  	join fertilizer f on f.id = v.fertilizerId 
+  	where f.dtu_code = #{dtuCode} and v.number = #{number}
+  </select>
+  
+  <select id="queryTvalvesByDtuCode" parameterType="String" resultMap="Tvalve">
+  	select v.*,f.dtu_code
+  	from tvalve v
+  	join fertilizer f on f.id = v.fertilizerId
+  	where f.dtu_code = #{dtuCode} and v.is_del = 0
+  </select>
+  
+  
+</mapper>

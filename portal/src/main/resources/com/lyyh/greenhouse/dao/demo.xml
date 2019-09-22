@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.UserDao">
+	<resultMap id="User" type="com.lyyh.greenhouse.pojo.User">
+		<id column="Id" property="id" jdbcType="BIGINT" />
+		<result column="UserName" property="username" jdbcType="VARCHAR" />
+		<result column="RealName" property="realname" jdbcType="VARCHAR" />
+		<result column="PassW" property="password" jdbcType="VARCHAR" />
+		<result column="ZoneCode" property="zoneCode" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findByUsername" parameterType="string" resultMap="User">
+		select UserName,PassW,RealName,ZoneCode
+		from User_GH
+		where 1=1
+		<if test="_parameter != null">
+			and UserName = #{_parameter,jdbcType=VARCHAR}
+		</if>
+
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.Screem8Dao" >
+  <resultMap id="Screem8" type="com.lyyh.greenhouse.pojo.Screem8" >
+    <id column="id" property="id" />
+    <result column="current_port_name" property="currentPortName"/>
+    <result column="baud_rate" property="baudRate"/>
+    <result column="interval_time" property="intervalTime"/>
+    <result column="zone_name" property="zoneName"/>
+    <result column="status" property="status"/>
+  </resultMap>
+ 
+ 	<sql id="Base_Column_List_With_Id">
+ 		id,current_port_name,interval_time,zone_name,baud_rate,status
+ 	</sql>
+ 	<sql id="Base_Column_List_WithOut_Id">
+ 		current_port_name,interval_time,zone_name,baud_rate,status
+ 	</sql>
+ <select id="selectByZoneName" parameterType="String" resultMap="Screem8">
+ 	select 
+ 	<include refid="Base_Column_List_With_Id"/>
+ 	from 
+ 	screem8Setting
+ 	where zone_name = #{zoneName}
+ 	
+ </select>
+  
+  
+  <insert id="saveScreem8Setting" parameterType="Screem8">
+  	insert into screem8Setting
+  	(current_port_name,interval_time,zone_name,baud_rate)
+  	values
+  	(#{currentPortName},#{intervalTime},#{zoneName},#{baudRate})
+  </insert>
+  
+  <update id="updateScreem8Setting" parameterType="Screem8">
+  	update screem8Setting 
+  	<set>
+  		<if test="currentPortName != null">
+  			current_port_name = #{currentPortName},
+  		</if>
+  		<if test="intervalTime != null">interval_time = #{intervalTime},</if>
+  		<if test="zoneName != null">zone_name = #{zoneName},</if>
+  		<if test="baudRate != null">baud_rate = #{baudRate},</if>
+  		<if test="status != null">status = #{status},</if>
+  	</set>
+  	where id = #{id}
+  </update>
+</mapper>

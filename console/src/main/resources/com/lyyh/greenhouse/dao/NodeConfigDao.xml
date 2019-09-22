@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.NodeConfigDao">
+	<resultMap id="NodeConfigWithDetail" type="com.lyyh.greenhouse.pojo.NodeConfig">
+		<id column="id" property="id" />
+		<result column="kl_gateway_id" property="gatewayId" />
+		<result column="sensor_id" property="sensorId" />
+		<result column="sensor_type_id" property="sensorTypeId" />
+		<result column="position" property="position" />
+		<result column="channel" property="channel" />
+		<result column="house_id" property="houseId" />
+		<result column="zone_id" property="zoneId" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="is_del" property="isDel" />
+		
+		<association property="gateway" column="kl_gateway_id" select="com.lyyh.greenhouse.dao.GatewayDao.selectById"></association>
+		<association property="sensor" column="sensor_id" select="com.lyyh.greenhouse.dao.SensorDao.selectWithTypeById"></association>
+	</resultMap>
+	<select id="queryAllActiviedByZoneId" parameterType="Integer" resultMap="NodeConfigWithDetail">
+		select nc.*,s. type_id sensor_type_id
+		from node_config nc
+		join sensor s on s.id = nc.sensor_id
+		where nc.zone_id = #{zoneId} and nc.is_del = 0 and s.is_del = 0
+	</select>
+	
+	<update id="replace" >
+		replace into node_config 
+			(sensor_id,kl_gateway_id,position,channel,house_id,zone_id,create_time)
+		values
+			(#{sensorId},#{gatewayId},#{position},#{channel},#{houseId},#{zoneId},now())
+	</update>
+</mapper>

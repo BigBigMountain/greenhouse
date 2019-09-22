@@ -1,0 +1,70 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/task
+   		http://www.springframework.org/schema/task/spring-task-4.0.xsd
+		http://code.alibabatech.com/schema/dubbo        
+		http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+		
+       
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		 <!-- 注入安全管理器对象 -->
+		 <property name="securityManager" ref="securityManager"/>
+		 <property name="loginUrl" value="/login.jsp"/>
+		 <property name="successUrl" value="/fertilizer/main.do"/>
+		 <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+		 <!-- 设置客户端访问路径由哪些过滤器进行处理 -->
+		 <property name="filterChainDefinitions">
+		 	<value>
+		 		<!-- 
+		 			authc:由shiro框架提供的一个过滤器别名，这个过滤器用于判断当前用户是否已经完成了认证，如果已经完成认证就放行，如果没有完成认证跳转到登录页面
+		 			anon:由shiro框架提供的一个过滤器别名，运行匿名访问
+		 			perms:由shiro框架提供的一个过滤器，用于检测当前用户是否具有某个权限
+		 		 -->
+		 		 /login.jsp = anon
+		 		 /css/** = anon
+		 		 /js/** = anon
+		 		 /images/** = anon
+		 		 /validatecode.jsp* = anon
+		 		 /user/login.do = anon
+		 		 
+		 		/** = authc
+		 	</value>
+		 </property>
+	</bean>
+	<!-- 注册安全管理器对象 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="bosRealm"/>
+	</bean>
+	
+	<!-- 注册自定义realm -->
+	<bean id="bosRealm" class="com.lyyh.fertilizer.backup.realms.BosRealm"/>
+	
+	<!-- 开启shiro框架的注解支持 -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+		<!-- 指定使用cglib方式创建代理对象 -->
+		<property name="proxyTargetClass" value="true"/>
+	</bean>
+	
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+		
+
+		
+</beans>

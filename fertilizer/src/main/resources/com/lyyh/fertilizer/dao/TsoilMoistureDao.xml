@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.fertilizer.dao.TsoilMoistureDao" >
+	<resultMap id="TsoilTempAndHum" type="com.lyyh.tzgk.pojo.TsoilTempAndHum" >
+		<id column="id" property="id"/>
+		<result column="msg" property="msg"/>
+		<result column="name" property="siteName"/>
+		<result column="siteNum" property="siteNum"/>
+		<result column="layerNum" property="layerNum"/>
+		<result column="date" property="time"/>
+		<result column="emac" property="emac"/>
+		<result column="user_id" property="userId"/>
+	</resultMap>
+
+	<select id="queryNewestSoilMoisture" parameterType="String" resultMap="TsoilTempAndHum">
+		select ed.id,ed.msg,sms.name,sms.siteNum,tah.layerNum,ed.date,tah.emac,u.user_id
+		from tequipmentData ed
+		join (
+				select max(date) date
+				from tequipmentData ed
+				right join tTempAndHumEquip tah on tah.emac = ed.emac
+				group by ed.emac 
+			) temp on temp.date = ed.date
+		join tTempAndHumEquip tah on tah.emac = ed.emac
+		join soilMoistureSite sms on sms.id = tah.site_id
+		join users u on u.user_id = tah.user_id 
+		where u.user_name = #{username}
+	  
+	</select>
+</mapper>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyyh.greenhouse.dao.SensorDataDao">
+	<resultMap id="SensorData" type="com.lyyh.greenhouse.pojo.SensorData">
+		<id column="id" property="id" />
+		<result column="sensor_id" property="sensorId" />
+		<result column="sensor_type_id" property="sensorTypeId" />
+		<result column="house_id" property="houseId" />
+		<result column="zone_id" property="zoneId" />
+		<result column="value" property="value" />
+		<result column="datetime" property="dateTime" />
+		<result column="unit" property="unit" />
+		<result column="data_type" property="dataType" />
+		<result column="sensor_name" property="sensorName" />
+		<result column="led_show" property="ledShow" />
+		<result column="image" property="image" />
+		<result column="excel_sort" property="excelSort" />
+		<result column="page_sort" property="pageSort" />
+	</resultMap>
+	
+	<resultMap id="ChartsPoint" type="com.lyyh.fertilizer.pojo.ChartsPoint">
+		<result column="x" property="x"/>
+		<result column="y" property="y"/>
+	
+	</resultMap>
+	
+	
+	<insert id="insertList" parameterType="list" >
+		insert into sensor_data
+		(sensor_id,sensor_type_id,house_id,zone_id,value,datetime)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.sensorId},#{item.sensorTypeId},#{item.houseId},#{item.zoneId},#{item.value},#{item.dateTime})
+		</foreach>
+	</insert>
+	
+	<select id="selectNewestDataByHouseId" parameterType="Integer" resultMap="SensorData">
+		select sd.*,s.name sensor_name,s.led_show,st.image,st.unit
+		from (
+			select max(id) id
+			from sensor_data 
+			where house_id = #{houseId}
+			group by sensor_id
+		) temp 
+		join sensor_data sd on sd.id = temp.id
+		join sensor s on sd.sensor_id = s.id
+		join sensor_type st on st.id = s.type_id
+	</select>
+	
+	<select id="selectByVo" parameterType="SensorDataVo" resultMap="SensorData">
+		select sd.*,s.name sensor_name,st.unit
+		from sensor_data sd 
+		join sensor s on sd.sensor_id = s.id
+		join sensor_type st on st.id = s.type_id
+		where s.id = #{sensorId} and sd.datetime between #{start} and #{end}
+		order by sd.datetime
+	</select>
+	
+	<select id="getTodayDataBySensorId" parameterType="int" resultMap="SensorData">
+		select sd.datetime ,sd.value 
+		from sensor_data sd 
+		where sd.sensor_id = #{sensorId} 
+		order by sd.datetime
+	</select>
+	
+	<select id="getSensorDataList" resultMap="SensorData">
+		<!-- 从实时数据表查 -->
+		<if test="start == null or end == null">
+			select * from sensor_data where sensor_id = #{sensorId} order by datetime 
+		</if>
+		<!-- 从历史数据查 -->
+		<if test="start != null and end != null">
+			select * 
+			from sensor_data_his 
+			where sensor_id = #{sensorId} and datetime between #{start} and #{end} 
+			order by datetime
+		</if>
+	</select>
+	
+	<select id="selectWithConditionByVo" parameterType="SensorDataVo" resultMap="SensorData">
+		<!-- 从实时数据表查 -->
+		<if test="start == null or end == null">
+			select * from sensor_data 
+		</if>
+		<!-- 从历史数据查 -->
+		<if test="start != null and end != null">
+			select * from sensor_data_his 
+		</if>
+		<where >
+			<if test="houseId != null and houseId != 0">
+				and house_id = #{houseId}
+			</if>
+			<if test="sensorId != null and sensorId != 0">
+				and sensor_id = #{sensorId}
+			</if>
+			
+			<if test="start != null and end != null">
+				and datetime between #{start} and #{end} 
+			</if>
+		</where>
+		<if test="order != null">
+			${order}
+		</if>
+		<if test="limit != null">
+			${limit} 
+		</if>
+	</select>
+	
+	<insert id="insertSensorDataToHis">
+		insert into sensor_data_his select * from sensor_data where mod(minute(datetime),10) = 0
+	</insert>
+	
+	<delete id="deleteSensorData">
+		delete from sensor_data
+	</delete>
+	
+	<select id="selectSensorDataByOrderByExcelSort" resultMap="SensorData">
+	select * from (
+		select d.datetime,d.value ,s.excel_sort
+		from sensor_data d
+		join sensor s on s.id = d.sensor_id
+		<where >
+			<if test="houseId != null and houseId != 0">
+				and d.house_id = #{houseId}
+			</if>
+			
+			<if test="start != null and end != null">
+				and d.datetime between #{start} and #{end} 
+			</if>
+		</where>
+		
+		union
+		
+		select d.datetime,d.value  ,s.excel_sort
+		from sensor_data_his d
+		join sensor s on s.id = d.sensor_id
+		<where >
+			<if test="houseId != null and houseId != 0">
+				and d.house_id = #{houseId}
+			</if>
+			
+			<if test="start != null and end != null">
+				and d.datetime between #{start} and #{end} 
+			</if>
+		</where>
+		) a
+		order by datetime,excel_sort
+	</select>
+</mapper>

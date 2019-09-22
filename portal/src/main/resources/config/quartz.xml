@@ -1,0 +1,122 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/task
+   		http://www.springframework.org/schema/task/spring-task-4.0.xsd
+		http://code.alibabatech.com/schema/dubbo        
+		http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+		
+<!-- jobBean 配置开始 -->  
+	<!-- <bean id="autoUpdateIP" class="com.lyyh.greenhouse.autoRun.AutoUpdateIP" >
+		<property name="zoneName" value="${zoneName}"/>
+	</bean> -->
+	
+	<!-- led -->
+<!-- 	<bean id="sendLedJob" class="com.lyyh.greenhouse.quartzJob.SendLedJob"> 
+		<property name="zoneId" value="${zoneId}" />
+	</bean> -->
+	<!-- 水表 -->
+	<bean id="collectWaterDataJob" class="com.lyyh.greenhouse.quartzJob.CollectWaterDataJob"> 
+		<property name="zoneId" value="${zoneId}" />
+	</bean>
+	
+	<!-- 采集数据 -->
+	<bean id="collectSensorDataJob" class="com.lyyh.greenhouse.quartzJob.CollectSensorDataJob"> 
+		<property name="zoneId" value="${zoneId}" />
+	</bean>
+	
+	<!-- 搬迁数据 -->  
+	<bean id="moveData" class="com.lyyh.greenhouse.quartzJob.MoveData" > </bean>
+<!-- jobBean 配置结束 -->  	
+
+<!-- detail 配置开始 -->	
+	<!-- job的配置开始 -->  
+<!-- 	<bean id="autoUpdateIPDetail"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	    <property name="targetObject"> <ref bean="autoUpdateIP" /> </property>  
+	    <property name="targetMethod"> <value>updateIP</value> </property>  
+	</bean>   -->
+	
+	<bean id="collectWaterDataDetail"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	    <property name="targetObject"> <ref bean="collectWaterDataJob" /> </property>  
+	    <property name="targetMethod"> <value>collectWaterData</value> </property>  
+	</bean>  
+	<bean id="moveDataDetail"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	    <property name="targetObject"> <ref bean="moveData" /> </property>  
+	    <property name="targetMethod"> <value>moveData</value> </property>  
+	</bean>  
+	<!-- led_detail -->
+<!-- 	<bean id="ledDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	    <property name="targetObject"><ref bean="sendLedJob" /></property>  
+	    <property name="targetMethod"><value>startLed</value></property>  
+	</bean>  --> 
+	<!-- 采集数据_detail -->
+	<bean id="collectDataDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	    <property name="targetObject"> <ref bean="collectSensorDataJob" /> </property>  
+	    <property name="targetMethod"> <value>collectSensorData</value> </property>  
+	</bean>  
+<!-- detail 配置结束 -->	
+	
+<!-- trigger 配置开始 -->
+	<!-- 调度的配置开始 -->  
+<!-- 	<bean id="autoUpdateIPTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+		<property name="jobDetail"> <ref bean="autoUpdateIPDetail" /> </property>
+		<property name="cronExpression"> <value>0 0/10 * * * ? *</value> </property>  
+	</bean>  -->
+	 
+	<!-- 采集水表数据  --> 
+	<bean id="collectWaterDataTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+		<property name="jobDetail"> <ref bean="collectWaterDataDetail" /></property>
+		<property name="cronExpression"><value>0/5 * * * * ? </value></property>  <!-- 每5秒采集一次 -->
+	</bean>  
+	<!-- 搬迁数据 每天0点执行一次 --> 
+	<bean id="moveDataJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+		<property name="jobDetail"> <ref bean="moveDataDetail" /></property>
+		<property name="cronExpression"><value>0 0 0 1/1 * ? </value></property>  
+	</bean>  
+	
+	 <!-- 采集数据,每分钟执行一次  -->
+	<bean id="collectDataTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+		<property name="jobDetail"> <ref bean="collectDataDetail" /> </property>
+		<property name="cronExpression"><value>0 0/1 * * * ? </value></property>  
+	</bean>  
+	
+	<!-- 发送led 每30秒 -->
+	<!-- <bean id="ledTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+		<property name="jobDetail"> <ref bean="ledDetail" /> </property>
+		<property name="cronExpression"><value>0 0/1 * * * ?</value></property>  
+	</bean> -->  
+<!-- trigger 配置结束 -->
+	
+	
+<!-- scheduler的配置开始 -->  
+	<bean name="startQuertz" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<!-- <property name="autoStartup" value="false"></property>  -->
+		<property name="triggers">  
+			<list>  
+				<!-- <ref bean="autoUpdateIPTrigger"/> -->
+ 				<ref bean="moveDataJobTrigger"/>
+ 				<ref bean="collectDataTrigger"/>
+ 				<ref bean="collectWaterDataTrigger"/>
+			</list>  
+		</property>  
+	</bean>  
+<!-- scheduler的配置结束 --> 
+	
+	
+
+</beans>
